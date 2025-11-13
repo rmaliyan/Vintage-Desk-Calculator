@@ -506,13 +506,7 @@ function handleState4(input) {
             currentValue = "-" + currentValue;
         }
     }
-    if (input === "sqrt") {
-        // if (currentValue[0] === "-") {
-        //     state = 5;            
-        //     isError = true;
-        //     return;
-        // }
-        // state = 4;
+    if (input === "sqrt") {      
         currentValue = trimDecimals(sqrt(currentValue));
     }
     if (input === "=") {
@@ -541,6 +535,90 @@ function handleState5(input){
     if (input === "power") {
         powerOff();
     }  
+
+}
+
+function handleState6(input) {
+    if (input === "clear") {
+        //check if state change is needed
+        state = 1;
+        clear();
+    }
+    if (input === "power") {
+        powerOff();
+    }
+
+}
+
+function handleState7(input) {
+    if (input === "clear") {
+        //check if state change is needed
+        state = 1;
+        clear();
+    }
+    if (input === "power") {
+        powerOff();
+    }
+
+}
+
+function handleState8(input) {
+    if (input === "clear") {
+        //check if state change is needed
+        state = 1;
+        clear();
+    }
+    if (input === "power") {
+        powerOff();
+    }
+
+}
+
+function handleState9(input) {
+    if (input === "clear") {
+        //check if state change is needed
+        state = 1;
+        clear();
+    }
+    if (input === "power") {
+        powerOff();
+    }
+
+}
+
+function handleState10(input) {
+    if (input === "clear") {
+        //check if state change is needed
+        state = 1;
+        clear();
+    }
+    if (input === "power") {
+        powerOff();
+    }
+
+}
+
+function handleState11(input) {
+    if (input === "clear") {
+        //check if state change is needed
+        state = 1;
+        clear();
+    }
+    if (input === "power") {
+        powerOff();
+    }
+
+}
+
+function handleState12(input) {
+    if (input === "clear") {
+        //check if state change is needed
+        state = 1;
+        clear();
+    }
+    if (input === "power") {
+        powerOff();
+    }
 
 }
 
