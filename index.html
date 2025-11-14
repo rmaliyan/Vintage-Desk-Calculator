@@ -137,7 +137,8 @@
 
       .wholeScreen {
         position: relative;
-        width: 370px;
+        width: 370px;      
+        gap: 8px;
         display: flex;
         flex-direction: row;
         margin-top: 20px;
@@ -149,9 +150,12 @@
         background-color: #dbedd5;
       }
 
+      .arrayContainer {
+        position: relative;
+      }
+
       .screenArray {
         position: absolute;
-        left: 35px;
         display: flex;
         height: 83px;
         flex-direction: row;
@@ -163,7 +167,6 @@
         position: absolute;
         display: flex;
         height: 83px;
-        left: 35px;
         pointer-events: none;
         width: fit-content;
         flex-direction: row;
@@ -511,64 +514,66 @@
               <div id="ErrorIndicator">E</div>
             </div>
 
-            <div class="screenArray">
-              <div id="digit0" class="Digit">8</div>
-              <div class="dotContainer">
-                <div id="dot0" class="decimalDot"></div>
+            <div class="arrayContainer">
+              <div class="screenArray">
+                <div id="digit0" class="Digit">8</div>
+                <div class="dotContainer">
+                  <div id="dot0" class="decimalDot"></div>
+                </div>
+                <div id="digit1" class="Digit">8</div>
+                <div class="dotContainer">
+                  <div id="dot1" class="decimalDot"></div>
+                </div>
+                <div id="digit2" class="Digit">8</div>
+                <div class="dotContainer">
+                  <div id="dot2" class="decimalDot"></div>
+                </div>
+                <div id="digit3" class="Digit">8</div>
+                <div class="dotContainer">
+                  <div id="dot3" class="decimalDot"></div>
+                </div>
+                <div id="digit4" class="Digit">8</div>
+                <div class="dotContainer">
+                  <div id="dot4" class="decimalDot"></div>
+                </div>
+                <div id="digit5" class="Digit">8</div>
+                <div class="dotContainer">
+                  <div id="dot5" class="decimalDot"></div>
+                </div>
+                <div id="digit6" class="Digit">8</div>
+                <div class="dotContainer">
+                  <div id="dot6" class="decimalDot"></div>
+                </div>
+                <div id="digit7" class="Digit">8</div>
+                <div class="dotContainer">
+                  <div id="dot7" class="decimalDot"></div>
+                </div>
+                <div id="digit8" class="Digit">8</div>
+                <div class="dotContainer">
+                  <div id="dot8" class="decimalDot"></div>
+                </div>
               </div>
-              <div id="digit1" class="Digit">8</div>
-              <div class="dotContainer">
-                <div id="dot1" class="decimalDot"></div>
-              </div>
-              <div id="digit2" class="Digit">8</div>
-              <div class="dotContainer">
-                <div id="dot2" class="decimalDot"></div>
-              </div>
-              <div id="digit3" class="Digit">8</div>
-              <div class="dotContainer">
-                <div id="dot3" class="decimalDot"></div>
-              </div>
-              <div id="digit4" class="Digit">8</div>
-              <div class="dotContainer">
-                <div id="dot4" class="decimalDot"></div>
-              </div>
-              <div id="digit5" class="Digit">8</div>
-              <div class="dotContainer">
-                <div id="dot5" class="decimalDot"></div>
-              </div>
-              <div id="digit6" class="Digit">8</div>
-              <div class="dotContainer">
-                <div id="dot6" class="decimalDot"></div>
-              </div>
-              <div id="digit7" class="Digit">8</div>
-              <div class="dotContainer">
-                <div id="dot7" class="decimalDot"></div>
-              </div>
-              <div id="digit8" class="Digit">8</div>
-              <div class="dotContainer">
-                <div id="dot8" class="decimalDot"></div>
-              </div>
-            </div>
 
-            <div class="screenArrayInactive">
-              <div class="Digit">8</div>
-              <div class="dotContainer"><div class="decimalDot"></div></div>
-              <div class="Digit">8</div>
-              <div class="dotContainer"><div class="decimalDot"></div></div>
-              <div class="Digit">8</div>
-              <div class="dotContainer"><div class="decimalDot"></div></div>
-              <div class="Digit">8</div>
-              <div class="dotContainer"><div class="decimalDot"></div></div>
-              <div class="Digit">8</div>
-              <div class="dotContainer"><div class="decimalDot"></div></div>
-              <div class="Digit">8</div>
-              <div class="dotContainer"><div class="decimalDot"></div></div>
-              <div class="Digit">8</div>
-              <div class="dotContainer"><div class="decimalDot"></div></div>
-              <div class="Digit">8</div>
-              <div class="dotContainer"><div class="decimalDot"></div></div>
-              <div class="Digit">8</div>
-              <div class="dotContainer"><div class="decimalDot"></div></div>
+              <div class="screenArrayInactive">
+                <div class="Digit">8</div>
+                <div class="dotContainer"><div class="decimalDot"></div></div>
+                <div class="Digit">8</div>
+                <div class="dotContainer"><div class="decimalDot"></div></div>
+                <div class="Digit">8</div>
+                <div class="dotContainer"><div class="decimalDot"></div></div>
+                <div class="Digit">8</div>
+                <div class="dotContainer"><div class="decimalDot"></div></div>
+                <div class="Digit">8</div>
+                <div class="dotContainer"><div class="decimalDot"></div></div>
+                <div class="Digit">8</div>
+                <div class="dotContainer"><div class="decimalDot"></div></div>
+                <div class="Digit">8</div>
+                <div class="dotContainer"><div class="decimalDot"></div></div>
+                <div class="Digit">8</div>
+                <div class="dotContainer"><div class="decimalDot"></div></div>
+                <div class="Digit">8</div>
+                <div class="dotContainer"><div class="decimalDot"></div></div>
+              </div>
             </div>
           </div>
         </div>
