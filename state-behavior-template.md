@@ -13,11 +13,11 @@ States:
 
 ToDo:
 [-] On mobile screen calculator sides touch screen borders.
-[-] On zen and mobile safari decimal dots hang lower than normal. On firefox they move upper. Try to rewrite this part based on how it looks on firefox.
-[-] Add keyboard functionality.
+[v] On zen and mobile safari decimal dots hang lower than normal. On firefox they move upper. Try to rewrite this part based on how it looks on firefox.
+[v] Add keyboard functionality.
 [-] Check percentage in different states. 
-[-] 15 * 8 M+ should add 120 to memory, now it adds 8. Pressing M+ second time does nothing. Should add 120 to memory resulting in 240 kept in memory, ready to recall.
-[-] 15*8 M+ / 8 becomes 1208. Appending 8 instead of starting to compose second operand.
+[v] 15 * 8 M+ should add 120 to memory, now it adds 8. Pressing M+ second time does nothing. Should add 120 to memory resulting in 240 kept in memory, ready to recall.
+[v] 15*8 M+ / 8 becomes 1208. Appending 8 instead of starting to compose second operand.
 [-] Add favicon
 
 State 0 - Calc Off
