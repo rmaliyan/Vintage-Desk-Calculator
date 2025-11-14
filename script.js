@@ -71,6 +71,20 @@ const squareRootButtonSVG = `<svg
                 </g>
               </svg>`;
 
+const backButtonSVG = `<svg 
+                        class="buttonSymbol"
+                        xmlns="http://www.w3.org/2000/svg" 
+                        version="1.1" viewBox="0 0 21.7 19.6"
+                        >
+                          <defs>
+                            <style>
+                                .st2 {
+                                    fill: #fff;
+                                }
+                             </style>
+                         </defs>
+                         <polygon class="st2" points="21.7 4.9 10.8 4.9 10.8 0 0 9.8 10.8 19.6 10.8 14.7 21.7 14.7 21.7 4.9"/>
+                         </svg>`;
 const topPanelSVG = `<svg
             draggable="false"
             class="screenContainerSVG"
@@ -136,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('solarPanelContainer').innerHTML = solarPanelSVG;
     document.getElementById('screenContainer').insertAdjacentHTML('beforeend', topPanelSVG);
     document.querySelector('#buttonPower .buttonGlare').insertAdjacentHTML('beforebegin', powerButtonSVG);
+    document.querySelector('#buttonBack .buttonGlare').insertAdjacentHTML('beforebegin', backButtonSVG);
     document.querySelector('#buttonSquareRoot .buttonGlare').insertAdjacentHTML('beforebegin', squareRootButtonSVG);
 });
 
@@ -257,20 +272,24 @@ function onUserInput(input) {
         case 5:
             handleState5(input);
             break;
-        //6. M+ Waiting input
+        //6. Composing Digit
         case 6:
             handleState6(input);
             break;
-        //7. M+ Composing second operand
+        //7. M+ Waiting input
         case 7:
             handleState7(input);
             break;
-        //8. M+ Show calculated result
+        //8. M+ Composing second operand
         case 8:
             handleState8(input);
             break;
-        //9. M+ Error
+        //9. M+ Show calculated result
         case 9:
+            handleState9(input);
+            break;  
+        //10. M+ Error
+        case 10:
             handleState9(input);
             break;  
     }
@@ -331,7 +350,7 @@ function handleState1(input) {
         currentValue = trimDecimals(sqrt(currentValue));
     }  
     if (input === "m+") {
-        state = 7;
+        state = 6;
         isMemoryAdded = true;
         memoryValue += +currentValue;
     }
@@ -458,6 +477,7 @@ function handleState3(input) {
         //check
         currentValue = trimDecimals(calculatePercentage(operand1, +currentValue, operator));
     }
+  
     if (input === "decimal") {
         if (currentValue.includes(".")) {
             return;

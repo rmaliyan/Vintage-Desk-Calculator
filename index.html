@@ -29,7 +29,8 @@
         background: linear-gradient(to bottom right, #cbd5e1, #94a3b8);
         background-size: 400% 400%;
         transform: scale(0.9);
-      }
+      }    
+
       .calcContainer {
         height: 100%;
         width: 100%;
@@ -38,6 +39,15 @@
         justify-content: center;
         align-items: center;
         transform: perspective(1500px) rotateX(5deg);
+      }
+
+        @media screen and (max-width: 480px) {
+        .calcContainer {
+          /* transform: scale(0.75); */
+          width: 90vw;
+          transform-origin: top center; 
+          margin: auto; 
+        }
       }
 
       .calculator {
@@ -53,10 +63,7 @@
         flex-direction: column;
         align-items: center;
         border-radius: 16px;
-        user-select: none;
-        /* pointer-events: none; */
-        /* user-drag: none;
-  -webkit-user-drag: none; */
+        user-select: none;       
       }
 
       .calculatorSideContainer {
@@ -67,7 +74,6 @@
         height: 570px;
         width: 455px;
         border-radius: 22px;
-        /* background-color: orange; */
         box-shadow: 5px 5px 32px 2px rgba(0, 0, 0, 0.2);
       }
 
@@ -143,6 +149,8 @@
         padding-top: 2px;
         z-index: 2;
         padding-bottom: 13px;
+        flex-wrap:wrap;
+        align-content: space-around;
       }
 
       .screenArrayInactive {
@@ -155,6 +163,8 @@
         flex-direction: row;
         padding-top: 2px;
         padding-bottom: 13px;
+        flex-wrap:wrap;
+        align-content: space-around;
       }
 
       .Digit {
@@ -191,7 +201,6 @@
         font-family: "Digital-7 Mono";
         font-size: 80px;
         text-align: right;
-        /* color:#BBCAB5; */
         color: #dfe8dc;
         width: 335px;
         height: 85px;
@@ -213,9 +222,7 @@
         font-size: 24px;
         font-weight: bold;
         z-index: 2;
-        /* background-color: transparent; */
         color: #bbcab5;
-        /* color:#dfe8dc; */
       }
 
       .infoMinus {
@@ -261,7 +268,7 @@
         justify-content: end;
         align-items: center;
         gap: 15px;
-      }   
+      }
 
       .buttonGray,
       .buttonYellow,
@@ -488,8 +495,7 @@
         <div id="screenContainer" class="screenContainer">
           <div class="screenHeader">
             <div id="logoContainer" class="logoContainer"></div>
-            <div id="solarPanelContainer" class="solarPanelContainer">             
-            </div>
+            <div id="solarPanelContainer" class="solarPanelContainer"></div>
           </div>
 
           <div class="wholeScreen">
@@ -558,7 +564,7 @@
               <div class="Digit">8</div>
               <div class="dotContainer"><div class="decimalDot"></div></div>
             </div>
-          </div>        
+          </div>
         </div>
         <div class="buttons">
           <div class="column1">
@@ -639,7 +645,7 @@
               onclick="onUserInput('back')"
             >
               <div class="buttonLightGrayBevel"></div>
-              <div class="buttonText">🡄</div>
+              <!-- <div class="buttonText">🡄</div> -->
               <div class="buttonGlare"></div>
             </div>
             <div class="buttonGray" id="buttonNine" onclick="onUserInput('9')">
@@ -681,8 +687,9 @@
             <div
               class="buttonLightGray"
               id="buttonSquareRoot"
-              onclick="onUserInput('sqrt')">
-              <div class="buttonLightGrayBevel"></div>           
+              onclick="onUserInput('sqrt')"
+            >
+              <div class="buttonLightGrayBevel"></div>
               <div class="buttonGlare"></div>
             </div>
             <div
@@ -755,67 +762,6 @@
         </div>
       </div>
     </div>
-
-    <template id="topPartTemplate">
-      <svg
-        draggable="false"
-        class="screenContainerSVG"
-        xmlns="http://www.w3.org/2000/svg"
-        version="1.1"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        viewBox="0 0 450 193.7"
-      >
-        <defs>
-          <style>
-            .st0 {
-              fill: url(#linear-gradient1);
-            }
-
-            .st1 {
-              fill: url(#linear-gradient);
-            }
-          </style>
-          <linearGradient
-            id="linear-gradient"
-            x1="455.5"
-            y1="32.8"
-            x2="4.9"
-            y2="173"
-            gradientTransform="translate(0 193.9) scale(1 -1)"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop offset="0" stop-color="#131218" />
-            <stop offset="1" stop-color="#3b3b3b" />
-          </linearGradient>
-          <linearGradient
-            id="linear-gradient1"
-            x1="2"
-            y1="9.3"
-            x2="445.3"
-            y2="9.3"
-            gradientTransform="translate(0 193.9) scale(1 -1)"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop offset="0" stop-color="#787878" />
-            <stop offset="1" stop-color="#131218" />
-          </linearGradient>
-        </defs>
-        <g>
-          <g>
-            <path
-              class="st1"
-              d="M450,178.7s-96.8,10.5-236.4,10.5S0,178.7,0,178.7V0h450v178.7Z"
-              shape-rendering="optimizeQuality"
-            />
-            <path
-              class="st0"
-              d="M0,177.1v4.4s74,10.5,213.6,10.5,236.4-10.5,236.4-10.5v-4.4s-96.8,10.5-236.4,10.5S0,177.1,0,177.1Z"
-              shape-rendering="optimizeQuality"
-            />
-          </g>
-        </g>
-      </svg>
-    </template>
 
     <script src="./script.js"></script>
   </body>
