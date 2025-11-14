@@ -1,3 +1,16 @@
+States:
+0. Calc Off
+1. Composing Digit
+2. Waiting Input
+3. Composing next Operand
+4. Show calculated result
+5. Error without memory
+6. Composing Digit
+7. M+ Waiting input
+8. M+ Composing next operand
+9. M+ Show calculated result
+10. M+ Error
+
 State 0 - Calc Off
 Input           | Effect / Next State
 --------------- | ----------------------------------------------------------
@@ -26,7 +39,7 @@ sign            | Toggles minus sign when value != 0
 sqrt            | Uses sqrt helper; negative radicand -> state 5 (error), otherwise state 4 with result
 %               | n/a
 =               | n/a
-m+              | Adds currentValue to memoryValue, turns memory indicator on, transitions to state 6
+m+              | n/a
 mr              | n/a
 OTHER NOTES     | Default input state right after power-on or digit entry
 
@@ -42,7 +55,7 @@ sign            | Toggles sign of currentValue; keeps operand1 synced with displ
 sqrt            | Negative -> state 5 error; otherwise performs sqrt, result shown in state 4
 %               | n/a
 =               | Calculates operand1 (left) op currentValue (right); divide-by-zero or overflow -> state 5; success -> state 4
-m+              | Adds displayed value to memoryValue; memory flag on; state unchanged
+m+              | Adds currentValue to memoryValue, turns memory indicator on, transitions to state 7
 mr              | n/a
 OTHER NOTES     | User has entered first operand and operator, waiting for next number or command
 
@@ -50,15 +63,15 @@ State 3 - Composing Second Operand
 Input           | Effect / Next State
 --------------- | ----------------------------------------------------------
 power           | powerOff(); -> state 0
-clear/back      | clear(); -> state 1
+clear/back      | clear(); -> state 1; back() removes last digit or returns to 0
 digits 0-9      | Appends digit if under maxChars (second operand entry)
-decimal         | n/a (currently not handled)
-+, -, *, /      | n/a (ignored)
+decimal         | Adds decimal point if missing
++, -, *, /      | calculats result and changes state to 2
 sign            | Toggles sign of second operand when value != 0
-sqrt            | n/a
+sqrt            | Negative -> state 5 error; otherwise performs sqrt,stays in state 3
 %               | Calculates percentage using operand1 and currentValue; stays in state 3 with result
 =               | Computes operand1 op currentValue -> state 4; divide-by-zero/overflow -> state 5; stores prior second operand for repeat-equals behavior
-m+              | n/a
+m+              | Adds currentValue to memoryValue, turns memory indicator on, transitions to state 7
 mr              | n/a
 OTHER NOTES     | Active while composing second operand before pressing operator/equals/percent
 
@@ -68,13 +81,13 @@ Input           | Effect / Next State
 power           | powerOff(); -> state 0
 clear/back      | clear(); -> state 1
 digits 0-9      | Starts fresh entry with digit; state -> 1; operator cleared
-decimal         | Starts fresh entry at 0.; state -> 1; operator cleared
+decimal         | Starts fresh entry at 0.; state -> 3; 
 +, -, *, /      | Treats current display as operand1, stores operator, goes to state 2
 sign            | Toggles sign of currentValue (if not 0)
 sqrt            | Uses sqrt helper; negative -> state 5 else stays in 4 with new result
 %               | n/a
 =               | Repeats last operation using operand1/operator; divide-by-zero or overflow -> state 5; success stays in state 4
-m+              | n/a
+m+              | Adds currentValue to memoryValue, turns memory indicator on, transitions to state 7
 mr              | n/a
 OTHER NOTES     | Displaying final result while allowing chaining or new entry
 
@@ -97,17 +110,17 @@ OTHER NOTES     | Indicates error (E). Only clear or power recovers
 State 6 - M+ Composing Digit
 Input           | Effect / Next State
 --------------- | ----------------------------------------------------------
-power           | 
-clear/back      | 
-digits 0-9      | 
-decimal         | 
-+, -, *, /      | 
-sign            | 
-sqrt            | 
-%               | 
-=               | 
-m+              | 
-mr              | 
+power           | Calls powerOff(); transitions to state 0
+clear/back      | clear() resets to 0 and remains in state 6; back() removes last digit or returns to 0
+digits 0-9      | Replaces 0 with digit or appends (until maxChars); stays in state 1
+decimal         | Adds decimal point if missing; stays in state 1
++, -, *, /      | Stores currentValue as operand1, sets operator, moves to state 8
+sign            | Toggles minus sign when value != 0
+sqrt            | Uses sqrt helper; negative radicand -> state 5 (error), otherwise state 4 with result
+%               | n/a
+=               | n/a
+m+              | Adds currentValue to memoryValue, turns memory indicator on, transitions to state 8
+mr              | n/a
 OTHER NOTES     | 
 
 State 7 - M+ Waiting for Operation

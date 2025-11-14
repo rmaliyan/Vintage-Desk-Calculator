@@ -134,82 +134,82 @@ const topPanelSVG = `<svg
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('logoContainer').innerHTML = logoSVG;
     document.getElementById('solarPanelContainer').innerHTML = solarPanelSVG;
-    document.getElementById('screenContainer').insertAdjacentHTML('beforeend', topPanelSVG);    
+    document.getElementById('screenContainer').insertAdjacentHTML('beforeend', topPanelSVG);
     document.querySelector('#buttonPower .buttonGlare').insertAdjacentHTML('beforebegin', powerButtonSVG);
-    document.querySelector('#buttonSquareRoot .buttonGlare').insertAdjacentHTML('beforebegin', squareRootButtonSVG);        
+    document.querySelector('#buttonSquareRoot .buttonGlare').insertAdjacentHTML('beforebegin', squareRootButtonSVG);
 });
 
 function setDot(index, state) {
-   const dot = document.getElementById(`dot${index}`);
-   if (dot) {dot.classList.toggle('active', state)};  
+    const dot = document.getElementById(`dot${index}`);
+    if (dot) { dot.classList.toggle('active', state) };
 }
 
 function setDigit(index, value, state) {
     const digit = document.getElementById(`digit${index}`);
-    if (digit) { 
+    if (digit) {
         digit.classList.toggle('active', state);
         digit.textContent = value;
     }
 }
 
-function setMinus (state) {
+function setMinus(state) {
     const MinusIndicator = document.getElementById("MinusIndicator");
-    if (state){
+    if (state) {
         MinusIndicator.style.backgroundColor = "black";
-        return; 
+        return;
     }
-    MinusIndicator.style.backgroundColor = "#BBCAB5";  
+    MinusIndicator.style.backgroundColor = "#BBCAB5";
 }
 
-function setMemory(state){
+function setMemory(state) {
     const MemoryIndicator = document.getElementById("MemoryIndicator");
     if (state) {
         MemoryIndicator.style.color = "black";
         return;
     }
-    MemoryIndicator.style.color = "#BBCAB5"; 
+    MemoryIndicator.style.color = "#BBCAB5";
 }
 
-function setError(state){
+function setError(state) {
     const ErrorIndicator = document.getElementById("ErrorIndicator");
     if (state) {
         ErrorIndicator.style.color = "black";
         return;
     }
-    ErrorIndicator.style.color = "#BBCAB5"; 
+    ErrorIndicator.style.color = "#BBCAB5";
 }
 
-function setScreen(currentValue, isMemoryAdded, isError){        
-    for (let i =0; i < maxChars; i++){
-        setDot(i,false)
+function setScreen(currentValue, isMemoryAdded, isError) {
+    for (let i = 0; i < maxChars; i++) {
+        setDot(i, false)
     }
 
     setMinus(false);
     setMemory(isMemoryAdded);
     setError(isError);
-        
-    if (currentValue[0]==="-"){
+
+    if (currentValue[0] === "-") {
         setMinus(true);
         currentValue = currentValue.slice(1);
     }
 
-    const decimalIndex = currentValue.indexOf("."); 
+    const decimalIndex = currentValue.indexOf(".");
 
-    let padLeft = maxChars - currentValue.length;    
+    let padLeft = maxChars - currentValue.length;
 
-    if (decimalIndex !==-1) {       
-        currentValue = currentValue.slice(0, decimalIndex) + currentValue.slice(decimalIndex+1); 
+    if (decimalIndex !== -1) {
+        currentValue = currentValue.slice(0, decimalIndex) + currentValue.slice(decimalIndex + 1);
         //padLeft was calculated before removing the dot hence ++
         padLeft++;
         // decimalIndex-1 because dots and digits indexes are not alligned
-        setDot(padLeft+decimalIndex-1, true);
-    }  
-      
-    for (let i = 0; i < padLeft; i++){
-        setDigit(i, 0, false);   
+        setDot(padLeft + decimalIndex - 1, true);
     }
-    for (let i = padLeft; i < maxChars; i++) {     
-        setDigit(i,currentValue[i-padLeft],true);        
+
+    for (let i = 0; i < padLeft; i++) {
+        setDigit(i, 0, false);
+    }
+    for (let i = padLeft; i < maxChars; i++) {
+        setDigit(i, currentValue[i - padLeft], true);
     }
 }
 
@@ -223,21 +223,6 @@ let isMemoryAdded = false;
 let isError = false;
 let memoryValue = null;
 let operand1 = null;
-
-//States
-//0. Calc Off
-//1. Composing Digit
-//2. Waiting Input
-//3. Composing Second Operand
-//4. Show calculated result
-//5. Error without memory
-//6. M+ Composing digit
-//7. M+ Waiting for operation
-//8. M+ Waiting input
-//9. M+ Composing second operand
-//10. M+ MR Composing second operand
-//11. M+ Show calculated result
-//12. M+ Error
 
 function onUserInput(input) {
     switch (state) {
@@ -260,244 +245,80 @@ function onUserInput(input) {
         case 2:
             handleState2(input);
             break;
-        //3. Composing Second Operand
+        //3. Composing Next Operand
         case 3:
             handleState3(input);
             break;
         //4. Show calculated result
-        case 4: 
+        case 4:
             handleState4(input);
-            break;   
+            break;
         //5. Error without memory
         case 5:
             handleState5(input);
-            break;   
-        //6. M+ Composing digit
+            break;
+        //6. M+ Waiting input
         case 6:
             handleState6(input);
-            break;  
-        //7. M+ Waiting for operation
+            break;
+        //7. M+ Composing second operand
         case 7:
             handleState7(input);
-            break;  
-        //8. M+ Waiting input
+            break;
+        //8. M+ Show calculated result
         case 8:
             handleState8(input);
-            break;  
-        //9. M+ Composing second operand
+            break;
+        //9. M+ Error
         case 9:
             handleState9(input);
             break;  
-        //10. M+ MR Composing second operand
-        case 10:
-            handleState10(input);
-            break;
-        //11. M+ Show calculated result
-        case 11:
-            handleState11(input);
-            break;  
-        //12. M+ Error
-        case 12:
-            handleState12(input);
-            break;    
     }
     setScreen(currentValue, isMemoryAdded, isError);
 }
 
-function handleState1(input) {       
+//1. Composing Digit
+function handleState1(input) {
     if (input === "power") {
         powerOff();
-    } 
+    }
     if (input === "clear") {
         clear();
     }
     if (input === "back") {
         back();
     }
-    if (input >="0" && input <= "9") {
-        if (currentValue ==="0") {
-            currentValue = input;    
-            return;       
-        }
-        if (getDigitAbsoluteLength(currentValue) === maxChars){
-            console.log("%cInfo: %cNumber of digits exceeds maxChar", "color :aqua; font-weight:bold","color:white" )
+    if (input >= "0" && input <= "9") {
+        if (currentValue === "0") {
+            currentValue = input;
             return;
         }
-        currentValue += input;        
-        return;     
-    }
-    if (input === "+" || input === "-" || input === "*" || input === "/"){
-        operand1 = +currentValue;
-        state = 2;
-        operator = input;
-        return;        
-    }
-
-    if (input === "sign") {
-        if (currentValue[0]==="-"){
-            currentValue = currentValue.substring(1);
+        if (getDigitAbsoluteLength(currentValue) === maxChars) {
+            console.log("%cInfo: %cNumber of digits exceeds maxChar", "color :aqua; font-weight:bold", "color:white")
             return;
-        }        
-        if (currentValue!=="0") {
-         currentValue = "-" + currentValue;     
         }
-    }   
-
-    if (input === "sqrt") {
-       currentValue = trimDecimals(sqrt(currentValue));
+        currentValue += input;
+        return;
     }
-
-    if (input === "m+") {        
-        isMemoryAdded = true;
-        memoryValue += +currentValue;
-        state = 6;
-    }  
-    if (input ==="decimal") {
+    if (input === "decimal") {
         if (currentValue.includes(".")) {
             return;
         }
-    
+
         if (currentValue === "0") {
             currentValue = "0.";
         } else {
             currentValue += ".";
         }
         return;
-    }        
- }
-
- function handleState2(input){
-     if (input === "clear") {
-         clear();
-     }
-     if (input === "power") {
-         powerOff();
-     }
-     if (input >= "0" && input <= "9") {     
-        state = 3; 
-        operand1 = +currentValue;
-        currentValue = input;
-        return;
-     }
-     if (input === "+" || input === "-" || input === "*" || input === "/") {
-        operator = input;
-        return;
-     }
-     if (input === "sqrt") {
-        if (currentValue[0]==="-"){
-        state = 5;
-        isError = true;
-        return;
-        }
-        state = 4;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));         
-     }
-     if (input === "sign") {
-         operand1 = +currentValue;
-         if (currentValue[0] === "-") {
-             currentValue = currentValue.substring(1);
-             return;
-         }
-         if (currentValue !== "0") {
-             currentValue = "-" + currentValue;
-         }
-     }     
-     if (input === "=") {
-         if (operator === "/" && currentValue === "0") {
-             isError = true;
-             state = 5;
-             return;
-         }
-         state = 4;
-         currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
-         if (getDigitAbsoluteLength(currentValue) > maxChars) {
-             isError = true;
-             state = 5;
-         }
-         return;
-     }
-     if (input === "m+") {
-        isMemoryAdded = true;
-        memoryValue += +currentValue;
-     }
- }
-
- function handleState3(input){
-     if (input === "clear") {
-         clear();
-     }
-     if (input === "power") {
-         powerOff();
-     }
-     if (input >= "0" && input <= "9") {
-         if (getDigitAbsoluteLength(currentValue) === maxChars) {
-             console.log("%cInfo: %cNumber of digits exceeds maxChar", "color :aqua; font-weight:bold", "color:white")
-             return;
-         }
-         currentValue += input;
-         return;
-     }
-     if (input === "=") {
-        if (operator === "/" && currentValue === "0") {
-            isError = true;
-            state = 5;
-            return;
-        }
-        state = 4;
-         let tmp = +currentValue;
-         currentValue =  trimDecimals(calculateResult(operand1,+currentValue, operator));
-         operand1 = tmp;
-         if (getDigitAbsoluteLength(currentValue) > maxChars) {
-            isError = true;
-            state = 5; 
-        }
-         return;
-     }
-
-     if (input === "sign") {
-         if (currentValue[0] === "-") {
-             currentValue = currentValue.substring(1);
-             return;
-         }
-         if (currentValue !== "0") {
-             currentValue = "-" + currentValue;
-         }
-     }   
-
-     if (input === "%") {
-        //check
-         currentValue = trimDecimals(calculatePercentage(operand1, +currentValue, operator));         
-     }
- }  
-
-function handleState4(input) {
-    if (input === "clear") {
-        //check if state change is needed
-        state = 1;
-        clear();        
     }
-    if (input === "power") {
-        powerOff();
-    }  
     if (input === "+" || input === "-" || input === "*" || input === "/") {
-        operand1 = +currentValue; 
-        operator = input;
+        operand1 = +currentValue;
         state = 2;
+        operator = input;
         return;
     }
-    if (input >= "0" && input <= "9") {
-        state = 1;
-        currentValue = input;
-        operator = "";
-        return;
-    }
-    if (input === "decimal") {
-        state = 1;
-        currentValue = "0.";
-        operator = "";
-        return;
-    }
-    if (input ==="sign") {
+    if (input === "sign") {
         if (currentValue[0] === "-") {
             currentValue = currentValue.substring(1);
             return;
@@ -506,7 +327,193 @@ function handleState4(input) {
             currentValue = "-" + currentValue;
         }
     }
-    if (input === "sqrt") {      
+    if (input === "sqrt") {
+        currentValue = trimDecimals(sqrt(currentValue));
+    }  
+    if (input === "m+") {
+        state = 7;
+        isMemoryAdded = true;
+        memoryValue += +currentValue;
+    }
+}
+
+//2. Waiting Input
+function handleState2(input) {
+    if (input === "power") {
+        powerOff();
+    }
+    if (input === "clear") {
+        clear();
+    }    
+    if (input >= "0" && input <= "9") {
+        state = 3;
+        operand1 = +currentValue;
+        currentValue = input;
+        return;
+    }
+    if (input === "+" || input === "-" || input === "*" || input === "/") {
+        operator = input;
+        return;
+    }
+    if (input === "sign") {
+        operand1 = +currentValue;
+        if (currentValue[0] === "-") {
+            currentValue = currentValue.substring(1);
+            return;
+        }
+        if (currentValue !== "0") {
+            currentValue = "-" + currentValue;
+        }
+    }
+    if (input === "sqrt") {
+        if (currentValue[0] === "-") {
+            state = 5;
+            isError = true;
+            return;
+        }
+        state = 4;
+        currentValue = trimDecimals(Math.sqrt(+currentValue));
+    }    
+    if (input === "=") {
+        if (operator === "/" && currentValue === "0") {
+            isError = true;
+            state = 5;
+            return;
+        }
+        state = 4;
+        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        if (getDigitAbsoluteLength(currentValue) > maxChars) {
+            isError = true;
+            state = 5;
+        }
+        return;
+    }
+    if (input === "m+") {
+        state = 7;
+        isMemoryAdded = true;
+        memoryValue += +currentValue;
+    }
+}
+
+//3. Composing Next Operand
+function handleState3(input) {    
+    if (input === "power") {
+        powerOff();
+    }
+    if (input === "clear") {
+        clear();
+    }   
+    if (input === "back") {
+        back();
+    }
+    if (input >= "0" && input <= "9") {
+        if (getDigitAbsoluteLength(currentValue) === maxChars) {
+            console.log("%cInfo: %cNumber of digits exceeds maxChar", "color :aqua; font-weight:bold", "color:white")
+            return;
+        }      
+        currentValue += input;
+        return;
+    }
+    if (input === "+" || input === "-" || input === "*" || input === "/") {               
+            if (operator === "/" && currentValue === "0") {
+                isError = true;
+                state = 5;
+                return;
+            }
+            currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+            operator = input;
+            operand1 = currentValue;
+            state = 2;
+            return;       
+    }
+    if (input === "sign") {
+        if (currentValue[0] === "-") {
+            currentValue = currentValue.substring(1);
+            return;
+        }
+        if (currentValue !== "0") {
+            currentValue = "-" + currentValue;
+        }
+    }
+    if (input === "sqrt") {
+        currentValue = trimDecimals(sqrt(currentValue));
+    }
+    if (input === "=") {
+        if (operator === "/" && currentValue === "0") {
+            isError = true;
+            state = 5;
+            return;
+        }
+        state = 4;
+        let tmp = +currentValue;
+        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        operand1 = tmp;
+        if (getDigitAbsoluteLength(currentValue) > maxChars) {
+            isError = true;
+            state = 5;
+        }
+        return;
+    }    
+    if (input === "%") {
+        //check
+        currentValue = trimDecimals(calculatePercentage(operand1, +currentValue, operator));
+    }
+    if (input === "decimal") {
+        if (currentValue.includes(".")) {
+            return;
+        }
+
+        if (currentValue === "0") {
+            currentValue = "0.";
+        } else {
+            currentValue += ".";
+        }
+        return;
+    }
+    if (input === "m+") {        
+        isMemoryAdded = true;
+        memoryValue += + currentValue;
+        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));       
+        state = 8;
+        operator = '';
+    }
+}
+
+//4. Show calculated result
+function handleState4(input) {
+    if (input === "power") {
+        powerOff();
+    }
+    if (input === "clear") {
+        clear();
+    }   
+    if (input >= "0" && input <= "9") {
+        state = 1;
+        currentValue = input;
+        operator = "";
+        return;
+    }
+    if (input === "decimal") {        
+        state = 3;
+        currentValue = "0.";
+        return;
+    }
+    if (input === "+" || input === "-" || input === "*" || input === "/") {
+        operand1 = +currentValue;
+        operator = input;
+        state = 2;
+        return;
+    }   
+    if (input === "sign") {
+        if (currentValue[0] === "-") {
+            currentValue = currentValue.substring(1);
+            return;
+        }
+        if (currentValue !== "0") {
+            currentValue = "-" + currentValue;
+        }
+    }
+    if (input === "sqrt") {
         currentValue = trimDecimals(sqrt(currentValue));
     }
     if (input === "=") {
@@ -524,102 +531,317 @@ function handleState4(input) {
         }
         return;
     }
-}  
-
-function handleState5(input){
-    if (input === "clear") {
-        //check if state change is needed
-        state = 1;
-        clear();
+    if (input === "m+") {
+        state = 8;
+        isMemoryAdded = true;
+        memoryValue += +currentValue;
     }
+}
+
+//5. Error without memory
+function handleState5(input) {
     if (input === "power") {
         powerOff();
+    }
+    if (input === "clear") {       
+        clear();
     }  
-
+    if (input === "back") {
+        clear();
+    }
 }
 
+//6. Composing Digit
 function handleState6(input) {
-    if (input === "clear") {
-        //check if state change is needed
-        state = 1;
-        clear();
-    }
     if (input === "power") {
         powerOff();
     }
+    if (input === "clear") {
+        clear();
+        state = 6;
+    }
+    if (input === "back") {
+        back();
+    }
+    if (input >= "0" && input <= "9") {
+        if (currentValue === "0") {
+            currentValue = input;
+            return;
+        }
+        if (getDigitAbsoluteLength(currentValue) === maxChars) {
+            console.log("%cInfo: %cNumber of digits exceeds maxChar", "color :aqua; font-weight:bold", "color:white")
+            return;
+        }
+        currentValue += input;
+        return;
+    }
+    if (input === "decimal") {
+        if (currentValue.includes(".")) {
+            return;
+        }
 
+        if (currentValue === "0") {
+            currentValue = "0.";
+        } else {
+            currentValue += ".";
+        }
+        return;
+    }
+    if (input === "+" || input === "-" || input === "*" || input === "/") {
+        operand1 = +currentValue;
+        state = 7;
+        operator = input;
+        return;
+    }
+    if (input === "sign") {
+        if (currentValue[0] === "-") {
+            currentValue = currentValue.substring(1);
+            return;
+        }
+        if (currentValue !== "0") {
+            currentValue = "-" + currentValue;
+        }
+    }
+    if (input === "sqrt") {
+        currentValue = trimDecimals(sqrt(currentValue));
+    }
+    if (input === "m+") {
+        isMemoryAdded = true;
+        memoryValue += +currentValue;
+        state = 7;
+    }
+    if (input === 'mr') {
+        currentValue = memoryValue;
+        state= 7;
+    }
 }
 
+//7. M+ Waiting input
 function handleState7(input) {
-    if (input === "clear") {
-        //check if state change is needed
-        state = 1;
-        clear();
-    }
     if (input === "power") {
         powerOff();
     }
-
+    if (input === "clear") {
+        clear();
+        state=6;
+    }
+    if (input >= "0" && input <= "9") {
+        operand1 = +currentValue;
+        currentValue = input;
+        return;
+    }
+    if (input === "+" || input === "-" || input === "*" || input === "/") {
+        operator = input;
+        return;
+    }
+    if (input === "sign") {
+        operand1 = +currentValue;
+        if (currentValue[0] === "-") {
+            currentValue = currentValue.substring(1);
+            return;
+        }
+        if (currentValue !== "0") {
+            currentValue = "-" + currentValue;
+        }
+    }
+    if (input === "sqrt") {
+        if (currentValue[0] === "-") {
+            state = 10;
+            isError = true;
+            return;
+        }
+        state = 9;
+        currentValue = trimDecimals(Math.sqrt(+currentValue));
+    }
+    if (input === "=") {
+        if (operator === "/" && currentValue === "0") {
+            isError = true;
+            state = 10;
+            return;
+        }
+        state = 9;
+        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        if (getDigitAbsoluteLength(currentValue) > maxChars) {
+            isError = true;
+            state = 10;
+        }
+        return;
+    }
+    if (input === "m+") {
+        state = 8;
+        isMemoryAdded = true;
+        memoryValue += +currentValue;
+    }
+    if (input === 'mr') {
+        currentValue = memoryValue;
+        state = 7;
+    }
 }
 
-function handleState8(input) {
-    if (input === "clear") {
-        //check if state change is needed
-        state = 1;
-        clear();
-    }
+//8. M+ Composing next operand
+function handleState8(input) {    
     if (input === "power") {
         powerOff();
     }
-
+    if (input === "clear") {
+        clear();
+        state =6;
+    }
+    if (input === "back") {
+        back();
+    }
+    if (input >= "0" && input <= "9") {
+        if (getDigitAbsoluteLength(currentValue) === maxChars) {
+            console.log("%cInfo: %cNumber of digits exceeds maxChar", "color :aqua; font-weight:bold", "color:white")
+            return;
+        }
+        currentValue += input;
+        return;
+    }
+    if (input === "+" || input === "-" || input === "*" || input === "/") {
+        if (operator === "/" && currentValue === "0") {
+            isError = true;
+            state = 10;
+            return;
+        }
+        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        operator = input;
+        operand1 = currentValue;
+        state = 6;
+        return;
+    }
+    if (input === "sign") {
+        if (currentValue[0] === "-") {
+            currentValue = currentValue.substring(1);
+            return;
+        }
+        if (currentValue !== "0") {
+            currentValue = "-" + currentValue;
+        }
+    }
+    if (input === "sqrt") {
+        currentValue = trimDecimals(sqrt(currentValue));
+    }
+    if (input === "=") {
+        if (operator === "/" && currentValue === "0") {
+            isError = true;
+            state = 10;
+            return;
+        }
+        state = 9;
+        let tmp = +currentValue;
+        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        operand1 = tmp;
+        if (getDigitAbsoluteLength(currentValue) > maxChars) {
+            isError = true;
+            state = 10;
+        }
+        return;
+    }
+    if (input === "%") {        
+        currentValue = trimDecimals(calculatePercentage(operand1, +currentValue, operator));
+    }
+    if (input === "decimal") {
+        if (currentValue.includes(".")) {
+            return;
+        }
+        if (currentValue === "0") {
+            currentValue = "0.";
+        } else {
+            currentValue += ".";
+        }
+        return;
+    }
+    if (input === "m+") {
+        isMemoryAdded = true;
+        memoryValue += + currentValue;
+        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        state = 9;
+        operator = '';
+    }
+    if (input === 'mr') {
+        currentValue = memoryValue;
+        state = 8;
+    }
 }
 
+//9. M+ Show calculated result
 function handleState9(input) {
-    if (input === "clear") {
-        //check if state change is needed
-        state = 1;
-        clear();
-    }
     if (input === "power") {
         powerOff();
     }
+    if (input === "clear") {
+        clear();
+        state = 6;
+    }
+    if (input >= "0" && input <= "9") {
+        state = 6;
+        currentValue = input;
+        operator = "";
+        return;
+    }
+    if (input === "decimal") {
+        state = 8;
+        currentValue = "0.";
+        return;
+    }
+    if (input === "+" || input === "-" || input === "*" || input === "/") {
+        operand1 = +currentValue;
+        operator = input;
+        state = 7;
+        return;
+    }
+    if (input === "sign") {
+        if (currentValue[0] === "-") {
+            currentValue = currentValue.substring(1);
+            return;
+        }
+        if (currentValue !== "0") {
+            currentValue = "-" + currentValue;
+        }
+    }
+    if (input === "sqrt") {
+        currentValue = trimDecimals(sqrt(currentValue));
+    }
+    if (input === "=") {
+        if (operator === "/" && operand1 === 0) {
+            isError = true;
+            state = 10;
+            return;
+        }
+        state = 9;
+        currentValue = trimDecimals(calculateResult(+currentValue, operand1, operator));
 
+        if (getDigitAbsoluteLength(currentValue) > maxChars) {
+            isError = true;
+            state = 10;
+        }
+        return;
+    }
+    if (input === "m+") {
+        state = 8;
+        isMemoryAdded = true;
+        memoryValue += +currentValue;
+    }
+    if (input === 'mr') {
+        currentValue = memoryValue;
+        state = 8;
+    }
 }
 
-function handleState10(input) {
-    if (input === "clear") {
-        //check if state change is needed
-        state = 1;
-        clear();
-    }
+//10. M+ Error
+function handleState10(input) { 
     if (input === "power") {
         powerOff();
     }
-
-}
-
-function handleState11(input) {
     if (input === "clear") {
-        //check if state change is needed
-        state = 1;
         clear();
+        state = 6;
     }
-    if (input === "power") {
-        powerOff();
-    }
-
-}
-
-function handleState12(input) {
-    if (input === "clear") {
-        //check if state change is needed
-        state = 1;
+    if (input === "back") {
         clear();
-    }
-    if (input === "power") {
-        powerOff();
-    }
-
+        state = 6;
+    }    
 }
 
 function powerOff() {
@@ -646,17 +868,17 @@ function back() {
 }
 
 /**
- * Returns absolute lenght of the number string, without minus and decima dot.
+ * Returns absolute lenght of the number string, without minus and decimal dot.
  *
  * @param {string} number - The first number.
  * @returns {number} Strin length.
  */
-function getDigitAbsoluteLength(number){
+function getDigitAbsoluteLength(number) {
     let numberLength = number.length;
     if (number[0] === "-") {
         numberLength--;
     }
-    if (number.includes(".") ) {
+    if (number.includes(".")) {
         numberLength--;
     }
     return numberLength;
@@ -668,28 +890,28 @@ function getDigitAbsoluteLength(number){
  * @param {number} decimalValue - Input value.
  * @returns {number} Trimmed value.
  */
-function trimDecimals(decimalValue){
-    let result = decimalValue.toFixed(maxChars);          
+function trimDecimals(decimalValue) {
+    let result = decimalValue.toFixed(maxChars);
 
     if (result[0] === "-") {
-        result = result.substring(0,maxChars + 2);        
-    }    
+        result = result.substring(0, maxChars + 2);
+    }
     else {
         result = result.substring(0, maxChars + 1);
     }
 
-    let firstNonZeroIndex = result.length-1;
-    for (let i = result.length-1; i>=0; i--) {
-        if(result[i] !== "0") {
+    let firstNonZeroIndex = result.length - 1;
+    for (let i = result.length - 1; i >= 0; i--) {
+        if (result[i] !== "0") {
             firstNonZeroIndex = i;
             break;
-        } 
+        }
     }
-    result = result.substring(0,firstNonZeroIndex+1);
-    if (result[result.length-1]===".") {
-        result = result.substring(0, result.length-1);
+    result = result.substring(0, firstNonZeroIndex + 1);
+    if (result[result.length - 1] === ".") {
+        result = result.substring(0, result.length - 1);
     }
-    if (result === "-0"){
+    if (result === "-0") {
         result = "0"
     }
     return result;
@@ -720,7 +942,7 @@ function sqrt(radicand) {
  * @param {string} operation - operation.
  * @returns {number} The result of calculation.
  */
-function calculateResult(leftSideOperand, rightSideOperand, operation){
+function calculateResult(leftSideOperand, rightSideOperand, operation) {
 
     if (operation === "+") {
         return leftSideOperand + rightSideOperand;
@@ -731,7 +953,7 @@ function calculateResult(leftSideOperand, rightSideOperand, operation){
     if (operation === "*") {
         return leftSideOperand * rightSideOperand;
     }
-    if (operation === "/") {      
+    if (operation === "/") {
         return leftSideOperand / rightSideOperand;
     }
 }
@@ -748,7 +970,7 @@ function calculateResult(leftSideOperand, rightSideOperand, operation){
 function calculatePercentage(leftSideOperand, rightSideOperand, operation) {
     if (operation === "+") {
         return leftSideOperand + ((leftSideOperand * rightSideOperand) / 100);
-        }
+    }
     if (operation === "-") {
         return leftSideOperand - ((leftSideOperand * rightSideOperand) / 100);
     }
