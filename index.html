@@ -28,8 +28,8 @@
         padding: 0;
         background: linear-gradient(to bottom right, #cbd5e1, #94a3b8);
         background-size: 400% 400%;
-        transform: scale(0.9);
-      }    
+        /* transform: scale(0.9); */
+      }
 
       .calcContainer {
         height: 100%;
@@ -41,12 +41,18 @@
         transform: perspective(1500px) rotateX(5deg);
       }
 
-        @media screen and (max-width: 480px) {
+      @media screen and (max-width: 480px) {
         .calcContainer {
-          /* transform: scale(0.75); */
           width: 90vw;
-          transform-origin: top center; 
-          margin: auto; 
+          padding: 0 12px;
+          box-sizing: border-box;
+          margin: auto;
+          transform: perspective(1500px) rotateX(5deg) scale(0.9);
+        }
+        .calculator {
+          left: 50%;
+          transform: translateX(-50%);
+          transform-origin: top center;
         }
       }
 
@@ -63,7 +69,7 @@
         flex-direction: column;
         align-items: center;
         border-radius: 16px;
-        user-select: none;       
+        user-select: none;
       }
 
       .calculatorSideContainer {
@@ -149,8 +155,8 @@
         padding-top: 2px;
         z-index: 2;
         padding-bottom: 13px;
-        flex-wrap:wrap;
-        align-content: space-around;
+        /* flex-wrap: wrap;
+        align-content: space-around; */
       }
 
       .screenArrayInactive {
@@ -163,8 +169,8 @@
         flex-direction: row;
         padding-top: 2px;
         padding-bottom: 13px;
-        flex-wrap:wrap;
-        align-content: space-around;
+        /* flex-wrap: wrap;
+        align-content: space-around; */
       }
 
       .Digit {
@@ -645,7 +651,6 @@
               onclick="onUserInput('back')"
             >
               <div class="buttonLightGrayBevel"></div>
-              <!-- <div class="buttonText">🡄</div> -->
               <div class="buttonGlare"></div>
             </div>
             <div class="buttonGray" id="buttonNine" onclick="onUserInput('9')">
