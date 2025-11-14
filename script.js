@@ -611,7 +611,7 @@ function handleState6(input) {
         state = 7;
     }
     if (input === 'mr') {
-        currentValue = memoryValue;
+        currentValue = memoryValue.toString();
         state= 7;
     }
 }
@@ -673,7 +673,7 @@ function handleState7(input) {
         memoryValue += +currentValue;
     }
     if (input === 'mr') {
-        currentValue = memoryValue;
+        currentValue = memoryValue.toString();
         state = 7;
     }
 }
@@ -760,7 +760,7 @@ function handleState8(input) {
         operator = '';
     }
     if (input === 'mr') {
-        currentValue = memoryValue;
+        currentValue = memoryValue.toString();
         state = 8;
     }
 }
@@ -824,7 +824,7 @@ function handleState9(input) {
         memoryValue += +currentValue;
     }
     if (input === 'mr') {
-        currentValue = memoryValue;
+        currentValue = memoryValue.toString();
         state = 8;
     }
 }
