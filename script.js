@@ -335,7 +335,7 @@ function onUserInput(input) {
         case 5:
             handleState5(input);
             break;
-        //6. Composing Digit
+        //6. M+ Composing Digit
         case 6:
             handleState6(input);
             break;
@@ -353,7 +353,7 @@ function onUserInput(input) {
             break;
         //10. M+ Error
         case 10:
-            handleState9(input);
+            handleState10(input);
             break;
     }
     setScreen(currentValue, isMemoryAdded, isError);
@@ -413,7 +413,7 @@ function handleState1(input) {
         currentValue = trimDecimals(sqrt(currentValue));
     }
     if (input === "m+") {
-        state = 6;
+        state = 7;
         isMemoryAdded = true;
         memoryValue += +currentValue;
     }
@@ -435,9 +435,6 @@ function handleState2(input) {
     }
     if (input === "decimal") {
         state = 3;
-        if (currentValue.includes(".")) {
-            return;
-        }
         currentValue = "0.";
         return;
     }
@@ -545,10 +542,9 @@ function handleState3(input) {
         return;
     }
     if (input === "%") {
-        //check
+        if (!operator) return;
         currentValue = trimDecimals(calculatePercentage(operand1, +currentValue, operator));
     }
-
     if (input === "decimal") {
         if (currentValue.includes(".")) {
             return;
@@ -963,10 +959,10 @@ function back() {
 }
 
 /**
- * Returns absolute lenght of the number string, without minus and decimal dot.
+ * Returns absolute length of the number string, without minus and decimal dot.
  *
  * @param {string} number - The first number.
- * @returns {number} Strin length.
+ * @returns {number} String length.
  */
 function getDigitAbsoluteLength(number) {
     let numberLength = number.length;
@@ -1052,7 +1048,6 @@ function calculateResult(leftSideOperand, rightSideOperand, operation) {
         return leftSideOperand / rightSideOperand;
     }
 }
-
 /**
  * Performs percentage calculation between 2 numbers based on operation.
  *
@@ -1076,9 +1071,3 @@ function calculatePercentage(leftSideOperand, rightSideOperand, operation) {
         return (leftSideOperand * 100) / rightSideOperand;
     }
 }
-
-//add Ctrl + C
-//Finish up state 1 and continue on with rest of the states
-//Make digit buttons' pressed state less dark
-//Mention in discussions that adding jsdoc comments before functions is a contious decision to learn the standarts
-//Add keyboard functionality

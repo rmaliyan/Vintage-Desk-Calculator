@@ -13,12 +13,20 @@ States:
 
 ToDo:
 [-] On mobile screen calculator sides touch screen borders.
-[v] On zen and mobile safari decimal dots hang lower than normal. On firefox they move upper. Try to rewrite this part based on how it looks on firefox.
+[-] On zen on linux and on android phone decimal dots move up. Try to rewrite this part without absolute positions.
 [v] Add keyboard functionality.
 [-] Check percentage in different states. 
 [v] 15 * 8 M+ should add 120 to memory, now it adds 8. Pressing M+ second time does nothing. Should add 120 to memory resulting in 240 kept in memory, ready to recall.
 [v] 15*8 M+ / 8 becomes 1208. Appending 8 instead of starting to compose second operand.
 [-] Add favicon
+[-] Treating anything numerically zero (after trimming) as “divide by zero” (0.0 or 0.0000000001).
+[-] While handling key pressing, avoid default behaviour only for the keys that are mapped so the browser hotkeys are not broken.
+[-] Add current value to clipboard on Ctrl+C
+[-] Try adding hover state
+[-] Find a way to better convey that adding jsdoc comments before functions is a conscious decision to introduce myself to the standards
+[-] Rewrite beheviour template.
+[-] Redraw beheviour graph in figma and add an image to repository.
+
 
 State 0 - Calc Off
 Input           | Effect / Next State
