@@ -1,6 +1,8 @@
 const logoSVG = `<svg
                 draggable="false"
                 class="logo"
+                width="100%" 
+                height="100%
                 xmlns="http://www.w3.org/2000/svg"
                 baseProfile="tiny"
                 version="1.2"
@@ -146,7 +148,7 @@ const topPanelSVG = `<svg
 `;
 
 document.addEventListener('DOMContentLoaded', () => {
-    // document.getElementById('logoCotainer').innerHTML = logoSVG;
+    document.getElementById('logoContainer').innerHTML = logoSVG;
     document.getElementById('solarPanelContainer').innerHTML = solarPanelSVG;
     document.getElementById('screenContainer').insertAdjacentHTML('beforeend', topPanelSVG);
     document.querySelector('#buttonPower .buttonGlare').insertAdjacentHTML('beforebegin', powerButtonSVG);
