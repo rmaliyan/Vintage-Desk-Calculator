@@ -5,11 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calculator test</title>
-    <link rel="icon" type="image/webp" href="data:image/webp;base64, UklGRj4BAABXRUJQVlA4TDEBAAAvD8ADEA/CJpJsKfMOOdjAvwBIKdIr/P/v2mDQSJKiPvh38NJfHoMBxt1hGtm2k/OD+opi6L8JLCpHn7mXUSRJivK16GD9+9tjhgDcbfMvk/G9jukwTTewAg/QgOLiHAwiIEJAEMnWa5bZLcpPgKEfW9Epea4D2P+tjCEAwfIFZgAGBKAGAYFuhyQIrBWDCIFMLLuWgWSyn9zOpgUWYJkYzP9jmVy2upNKRjyJ317VUBSeQaRwGEm2aX3r6du2bf/8wzqoH8I590b0X2HaNowMHa+E/iiZ4Eqpanx/prVb4HqjTfpIOVpB80JEYmE0qcPpiCZ5qjVaF3GZRoj3uAe/r7+YZTvY8xV83v5ylSNKxhYLNi90rDcZK7qY07HdObpzmKc+NQ1j7FiaPZAeDphUAQA=">
+    <link
+      rel="icon"
+      type="image/webp"
+      href="data:image/webp;base64, UklGRj4BAABXRUJQVlA4TDEBAAAvD8ADEA/CJpJsKfMOOdjAvwBIKdIr/P/v2mDQSJKiPvh38NJfHoMBxt1hGtm2k/OD+opi6L8JLCpHn7mXUSRJivK16GD9+9tjhgDcbfMvk/G9jukwTTewAg/QgOLiHAwiIEJAEMnWa5bZLcpPgKEfW9Epea4D2P+tjCEAwfIFZgAGBKAGAYFuhyQIrBWDCIFMLLuWgWSyn9zOpgUWYJkYzP9jmVy2upNKRjyJ317VUBSeQaRwGEm2aX3r6du2bf/8wzqoH8I590b0X2HaNowMHa+E/iiZ4Eqpanx/prVb4HqjTfpIOVpB80JEYmE0qcPpiCZ5qjVaF3GZRoj3uAe/r7+YZTvY8xV83v5ylSNKxhYLNi90rDcZK7qY07HdObpzmKc+NQ1j7FiaPZAeDphUAQA="
+    />
     <style>
       * {
         padding: 0px;
         margin: 0px;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
       }
 
       @font-face {
@@ -23,13 +32,20 @@
         font-display: swap;
       }
 
+      @media screen and (max-width: 480px) {
+        .calcContainer {
+          box-sizing: border-box;
+          margin: auto;
+          transform: scale(0.8);
+        }     
+      }
+
       body {
         height: 100vh;
         margin: 0;
         padding: 0;
         background: linear-gradient(to bottom right, #cbd5e1, #94a3b8);
         background-size: 400% 400%;
-        /* transform: scale(0.9); */
       }
 
       .calcContainer {
@@ -40,14 +56,6 @@
         justify-content: center;
         align-items: center;
         transform: perspective(1500px) rotateX(5deg);
-      }
-
-      @media screen and (max-width: 480px) {
-        .calcContainer {
-          box-sizing: border-box;
-          margin: auto;
-          transform: scale(0.8);
-        }
       }
 
       .calculator {
@@ -132,7 +140,7 @@
 
       .wholeScreen {
         position: relative;
-        width: 370px;      
+        width: 370px;
         gap: 8px;
         display: flex;
         flex-direction: row;
@@ -152,20 +160,20 @@
       .screenArray {
         position: absolute;
         display: flex;
-        height: 83px;
         flex-direction: row;
-        padding-top: 2px;
+        height: 85px;        
+        pointer-events: none;
+        width: fit-content;
         z-index: 2;
       }
 
       .screenArrayInactive {
         position: absolute;
         display: flex;
-        height: 83px;
-        pointer-events: none;
-        width: fit-content;
         flex-direction: row;
-        padding-top: 2px;
+        height: 85px;
+        pointer-events: none;
+        width: fit-content;        
       }
 
       .Digit {
@@ -173,9 +181,15 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        height: 85px;
         font-family: "Digital Mono";
         font-size: 80px;
+        line-height: 1;
         color: #bbcab5;
+      }
+
+      .Digit-char {
+        display: inline;
       }
 
       .Digit.active {
@@ -183,14 +197,14 @@
       }
 
       .dotContainer {
-        position: relative;
-        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding-bottom: 14px;
         width: 5px;
       }
 
       .decimalDot {
-        position: absolute;
-        bottom: 15px;
         width: 5px;
         height: 5px;
         border-radius: 2px;
@@ -199,22 +213,7 @@
 
       .decimalDot.active {
         background-color: black;
-      }
-
-      .inactiveDigits {
-        font-family: "Digital Mono";
-        font-size: 80px;
-        text-align: right;
-        color: #dfe8dc;
-        width: 335px;
-        height: 85px;
-        position: absolute;
-        left: 72px;
-        top: 74px;
-        border: none;
-        z-index: 0;
-        user-select: none;
-      }
+      }      
 
       .infoBlock {
         display: flex;
@@ -498,7 +497,7 @@
       <div class="calculator">
         <div id="screenContainer" class="screenContainer">
           <div class="screenHeader">
-            <div id="logoContainer" class="logoContainer"></div>            
+            <div id="logoContainer" class="logoContainer"></div>
             <div id="solarPanelContainer" class="solarPanelContainer"></div>
           </div>
 
@@ -511,62 +510,80 @@
 
             <div class="arrayContainer">
               <div class="screenArray">
-                <div id="digit0" class="Digit">8</div>
+                <div id="digit0" class="Digit">
+                  <span class="Digit-char">8</span>
+                </div>
                 <div class="dotContainer">
                   <div id="dot0" class="decimalDot"></div>
                 </div>
-                <div id="digit1" class="Digit">8</div>
+                <div id="digit1" class="Digit">
+                  <span class="Digit-char">8</span>
+                </div>
                 <div class="dotContainer">
                   <div id="dot1" class="decimalDot"></div>
                 </div>
-                <div id="digit2" class="Digit">8</div>
+                <div id="digit2" class="Digit">
+                  <span class="Digit-char">8</span>
+                </div>
                 <div class="dotContainer">
                   <div id="dot2" class="decimalDot"></div>
                 </div>
-                <div id="digit3" class="Digit">8</div>
+                <div id="digit3" class="Digit">
+                  <span class="Digit-char">8</span>
+                </div>
                 <div class="dotContainer">
                   <div id="dot3" class="decimalDot"></div>
                 </div>
-                <div id="digit4" class="Digit">8</div>
+                <div id="digit4" class="Digit">
+                  <span class="Digit-char">8</span>
+                </div>
                 <div class="dotContainer">
                   <div id="dot4" class="decimalDot"></div>
                 </div>
-                <div id="digit5" class="Digit">8</div>
+                <div id="digit5" class="Digit">
+                  <span class="Digit-char">8</span>
+                </div>
                 <div class="dotContainer">
                   <div id="dot5" class="decimalDot"></div>
                 </div>
-                <div id="digit6" class="Digit">8</div>
+                <div id="digit6" class="Digit">
+                  <span class="Digit-char">8</span>
+                </div>
                 <div class="dotContainer">
                   <div id="dot6" class="decimalDot"></div>
                 </div>
-                <div id="digit7" class="Digit">8</div>
+                <div id="digit7" class="Digit">
+                  <span class="Digit-char">8</span>
+                </div>
                 <div class="dotContainer">
                   <div id="dot7" class="decimalDot"></div>
                 </div>
-                <div id="digit8" class="Digit">8</div>
+                <div id="digit8" class="Digit">
+                  <span class="Digit-char">8</span>
+                </div>
                 <div class="dotContainer">
                   <div id="dot8" class="decimalDot"></div>
                 </div>
               </div>
 
               <div class="screenArrayInactive">
-                <div class="Digit">8</div>
+                <div class="Digit"><span class="Digit-char">8</span></div>
                 <div class="dotContainer"><div class="decimalDot"></div></div>
-                <div class="Digit">8</div>
+                <div class="Digit"><span class="Digit-char">8</span></div>
                 <div class="dotContainer"><div class="decimalDot"></div></div>
-                <div class="Digit">8</div>
+                <div class="Digit"><span class="Digit-char">8</span></div>
                 <div class="dotContainer"><div class="decimalDot"></div></div>
-                <div class="Digit">8</div>
+                <div class="Digit"><span class="Digit-char">8</span></div>
                 <div class="dotContainer"><div class="decimalDot"></div></div>
-                <div class="Digit">8</div>
+                <div class="Digit"><span class="Digit-char">8</span></div>
                 <div class="dotContainer"><div class="decimalDot"></div></div>
-                <div class="Digit">8</div>
+                <div class="Digit"><span class="Digit-char">8</span></div>
                 <div class="dotContainer"><div class="decimalDot"></div></div>
-                <div class="Digit">8</div>
+                <div class="Digit"><span class="Digit-char">8</span></div>
                 <div class="dotContainer"><div class="decimalDot"></div></div>
-                <div class="Digit">8</div>
+                <div class="Digit"><span class="Digit-char">8</span></div>
                 <div class="dotContainer"><div class="decimalDot"></div></div>
-                <div class="Digit">8</div>
+                <div class="Digit"><span class="Digit-char">8</span></div>
                 <div class="dotContainer"><div class="decimalDot"></div></div>
               </div>
             </div>
@@ -770,20 +787,24 @@
 
     <script src="./script.js"></script>
     <script>
-      function calculatePercentage(leftSideOperand, rightSideOperand, operation) {
-    if (operation === "+") {
-        return leftSideOperand + ((leftSideOperand * rightSideOperand) / 100);
-    }
-    if (operation === "-") {
-        return leftSideOperand - ((leftSideOperand * rightSideOperand) / 100);
-    }
-    if (operation === "*") {
-        return (leftSideOperand * rightSideOperand) / 100;
-    }
-    if (operation === "/") {
-        return (leftSideOperand * 100) / rightSideOperand;
-    }
-}
+      function calculatePercentage(
+        leftSideOperand,
+        rightSideOperand,
+        operation
+      ) {
+        if (operation === "+") {
+          return leftSideOperand + (leftSideOperand * rightSideOperand) / 100;
+        }
+        if (operation === "-") {
+          return leftSideOperand - (leftSideOperand * rightSideOperand) / 100;
+        }
+        if (operation === "*") {
+          return (leftSideOperand * rightSideOperand) / 100;
+        }
+        if (operation === "/") {
+          return (leftSideOperand * 100) / rightSideOperand;
+        }
+      }
     </script>
   </body>
 </html>
