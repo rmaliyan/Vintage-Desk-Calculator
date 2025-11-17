@@ -146,7 +146,7 @@ const topPanelSVG = `<svg
 `;
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('logoContainer').innerHTML = logoSVG;
+    // document.getElementById('logoCotainer').innerHTML = logoSVG;
     document.getElementById('solarPanelContainer').innerHTML = solarPanelSVG;
     document.getElementById('screenContainer').insertAdjacentHTML('beforeend', topPanelSVG);
     document.querySelector('#buttonPower .buttonGlare').insertAdjacentHTML('beforebegin', powerButtonSVG);
