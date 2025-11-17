@@ -29,7 +29,7 @@
             format("woff");
         font-weight: normal;
         font-style: normal;
-        font-display: swap;        
+        font-display: swap;
       }
 
       @media screen and (max-width: 480px) {
@@ -37,7 +37,10 @@
           box-sizing: border-box;
           margin: auto;
           transform: scale(0.7);
-        }     
+          background-color: orange;
+          padding-left: 30px;
+          padding-right: 30px;
+        }
       }
 
       body {
@@ -55,11 +58,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        transform: perspective(1500px) rotateX(5deg);
+        transform: perspective(1500px) rotateX(5deg);        
       }
 
       .calculator {
-        position: absolute;
+        /* position: absolute; */
         height: 565px;
         width: 449px;
         background: linear-gradient(
@@ -72,6 +75,7 @@
         align-items: center;
         border-radius: 16px;
         user-select: none;
+        z-index: 3;
       }
 
       .calculatorSideContainer {
@@ -161,7 +165,7 @@
         position: absolute;
         display: flex;
         flex-direction: row;
-        height: 85px;        
+        height: 85px;
         pointer-events: none;
         width: fit-content;
         z-index: 2;
@@ -173,7 +177,7 @@
         flex-direction: row;
         height: 85px;
         pointer-events: none;
-        width: fit-content;        
+        width: fit-content;
       }
 
       .Digit {
@@ -213,7 +217,7 @@
 
       .decimalDot.active {
         background-color: black;
-      }      
+      }
 
       .infoBlock {
         display: flex;
