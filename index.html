@@ -32,7 +32,7 @@
         font-display: swap;
       }
 
-      @media screen and (max-width: 480px) {
+      /* @media screen and (max-width: 480px) {
         .calcContainer {
           box-sizing: border-box;
           margin: auto;
@@ -41,19 +41,21 @@
           padding-left: 30px;
           padding-right: 30px;
         }
-      }
+      } */
 
       body {
         height: 100vh;
         margin: 0;
-        padding: 0;
+        padding: clamp(12px, 4vw, 32px);;
+        box-sizing: border-box;
         background: linear-gradient(to bottom right, #cbd5e1, #94a3b8);
         background-size: 400% 400%;
       }
 
       .calcContainer {
         height: 100%;
-        width: 100%;
+        max-width: 480px;
+        margin: 0 auto;
         position: relative;
         display: flex;
         justify-content: center;
@@ -789,26 +791,6 @@
       </div>
     </div>
 
-    <script src="./script.js"></script>
-    <script>
-      function calculatePercentage(
-        leftSideOperand,
-        rightSideOperand,
-        operation
-      ) {
-        if (operation === "+") {
-          return leftSideOperand + (leftSideOperand * rightSideOperand) / 100;
-        }
-        if (operation === "-") {
-          return leftSideOperand - (leftSideOperand * rightSideOperand) / 100;
-        }
-        if (operation === "*") {
-          return (leftSideOperand * rightSideOperand) / 100;
-        }
-        if (operation === "/") {
-          return (leftSideOperand * 100) / rightSideOperand;
-        }
-      }
-    </script>
+    <script src="./script.js"></script>    
   </body>
 </html>
