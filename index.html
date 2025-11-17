@@ -74,11 +74,12 @@
 
       @media (max-width: 480px) {
         :root {
-          --calc-scale: 0.75; 
+          --calc-scale: 0.85; 
           --calc-drawn-width: calc(var(--calc-width) * var(--calc-scale));
         }
 
         body {
+          height: 90vh;
           padding-left: max(12px, calc((100vw - var(--calc-drawn-width)) / 2));
           padding-right: max(12px, calc((100vw - var(--calc-drawn-width)) / 2));
         }
@@ -86,7 +87,7 @@
         .calcContainer {
           transform-origin: center;
           transform: scale(var(--calc-scale));
-          height: 80%;
+          height: 60%;
         }
       }
 
