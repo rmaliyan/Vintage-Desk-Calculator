@@ -32,6 +32,11 @@
         font-display: swap;
       }
 
+      :root {
+        --calc-width: 449px;
+        --calc-scale: 1;
+      }
+
       /* @media screen and (max-width: 480px) {
         .calcContainer {
           box-sizing: border-box;
@@ -46,7 +51,7 @@
       body {
         height: 100vh;
         margin: 0;
-        padding: clamp(12px, 4vw, 32px);;
+        padding: clamp(12px, 4vw, 32px);
         box-sizing: border-box;
         background: linear-gradient(to bottom right, #cbd5e1, #94a3b8);
         background-size: 400% 400%;
@@ -54,13 +59,31 @@
 
       .calcContainer {
         height: 100%;
-        max-width: 480px;
+        width: var(--calc-width);
+        max-width: 100%;
         margin: 0 auto;
         position: relative;
         display: flex;
         justify-content: center;
         align-items: center;
-        transform: perspective(1500px) rotateX(5deg);        
+        transform: perspective(1500px) rotateX(5deg);
+      }
+
+      @media (max-width: 480px) {
+        :root {
+          --calc-scale: 0.72; 
+          --calc-drawn-width: calc(var(--calc-width) * var(--calc-scale));
+        }
+
+        body {
+          padding-left: max(12px, calc((100vw - var(--calc-drawn-width)) / 2));
+          padding-right: max(12px, calc((100vw - var(--calc-drawn-width)) / 2));
+        }
+
+        .calcContainer {
+          transform-origin: top center;
+          transform: scale(var(--calc-scale));
+        }
       }
 
       .calculator {
@@ -791,6 +814,6 @@
       </div>
     </div>
 
-    <script src="./script.js"></script>    
+    <script src="./script.js"></script>
   </body>
 </html>
