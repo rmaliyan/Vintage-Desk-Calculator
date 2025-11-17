@@ -53,6 +53,9 @@
         margin: 0;
         padding: clamp(12px, 4vw, 32px);
         box-sizing: border-box;
+        display:flex;
+        align-items: center;
+        justify-content: center;
         background: linear-gradient(to bottom right, #cbd5e1, #94a3b8);
         background-size: 400% 400%;
       }
@@ -71,7 +74,7 @@
 
       @media (max-width: 480px) {
         :root {
-          --calc-scale: 0.72; 
+          --calc-scale: 0.75; 
           --calc-drawn-width: calc(var(--calc-width) * var(--calc-scale));
         }
 
@@ -83,6 +86,7 @@
         .calcContainer {
           transform-origin: center;
           transform: scale(var(--calc-scale));
+          height: 80%;
         }
       }
 
