@@ -2,7 +2,7 @@ const logoSVG = `<svg
                 draggable="false"
                 class="logo"
                 width="100%" 
-                height="100%
+                height="100%"
                 xmlns="http://www.w3.org/2000/svg"
                 baseProfile="tiny"
                 version="1.2"
@@ -284,7 +284,6 @@ function setScreen(currentValue, isMemoryAdded, isError) {
         // decimalIndex-1 because dots and digits indexes are not alligned
         setDot(padLeft + decimalIndex - 1, true);
     }
-
     for (let i = 0; i < padLeft; i++) {
         setDigit(i, 0, false);
     }
@@ -337,25 +336,33 @@ function onUserInput(input) {
         case 5:
             handleState5(input);
             break;
-        //6. M+ Composing Digit
+        //6. M+ Post Memory Store
         case 6:
             handleState6(input);
             break;
-        //7. M+ Waiting input
+        //7. M+ Composing Digit
         case 7:
             handleState7(input);
             break;
-        //8. M+ Composing second operand
+        //8. M+ Waiting input
         case 8:
             handleState8(input);
             break;
-        //9. M+ Show calculated result
+        //9. M+ Post Memory Recall Op2
         case 9:
             handleState9(input);
             break;
-        //10. M+ Error
+        //10. M+ Composing second operand
         case 10:
             handleState10(input);
+            break;
+        //11. M+ Show calculated result
+        case 11:
+            handleState11(input);
+            break;
+        //12. M+ Error
+        case 12:
+            handleState12(input);
             break;
     }
     setScreen(currentValue, isMemoryAdded, isError);
@@ -415,7 +422,7 @@ function handleState1(input) {
         currentValue = trimDecimals(sqrt(currentValue));
     }
     if (input === "m+") {
-        state = 7;
+        state = 6;
         isMemoryAdded = true;
         memoryValue += +currentValue;
     }
@@ -455,13 +462,7 @@ function handleState2(input) {
         }
     }
     if (input === "sqrt") {
-        if (currentValue[0] === "-") {
-            state = 5;
-            isError = true;
-            return;
-        }
-        state = 4;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));
+        currentValue = trimDecimals(sqrt(currentValue));
     }
     if (input === "=") {
         if (operator === "/" && currentValue === "0") {
@@ -477,8 +478,8 @@ function handleState2(input) {
         }
         return;
     }
-    if (input === "m+") {
-        state = 7;
+    if (input === "m+") {        
+        state = 6;
         isMemoryAdded = true;
         memoryValue += +currentValue;
     }
@@ -503,8 +504,21 @@ function handleState3(input) {
         currentValue += input;
         return;
     }
+    if (input === "decimal") {
+        if (currentValue.includes(".")) {
+            return;
+        }
+
+        if (currentValue === "0") {
+            currentValue = "0.";
+        } else {
+            currentValue += ".";
+        }
+        return;
+    }
     if (input === "+" || input === "-" || input === "*" || input === "/") {
         if (operator === "/" && currentValue === "0") {
+            console.log("%cError: %cYou can't divide by zero", "color :red; font-weight:bold", "color:white")
             isError = true;
             state = 5;
             return;
@@ -512,7 +526,7 @@ function handleState3(input) {
         currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
         operator = input;
         operand1 = +currentValue;
-        state = 2;
+        state = 4;
         return;
     }
     if (input === "sign") {
@@ -529,6 +543,7 @@ function handleState3(input) {
     }
     if (input === "=") {
         if (operator === "/" && currentValue === "0") {
+            console.log("%cError: %cYou can't divide by zero", "color :red; font-weight:bold", "color:white")
             isError = true;
             state = 5;
             return;
@@ -546,24 +561,12 @@ function handleState3(input) {
     if (input === "%") {
         if (!operator) return;
         currentValue = trimDecimals(calculatePercentage(operand1, +currentValue, operator));
-    }
-    if (input === "decimal") {
-        if (currentValue.includes(".")) {
-            return;
-        }
-
-        if (currentValue === "0") {
-            currentValue = "0.";
-        } else {
-            currentValue += ".";
-        }
-        return;
-    }
+    }   
     if (input === "m+") {
         isMemoryAdded = true;
         currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
         memoryValue += + currentValue;
-        state = 9;
+        state = 6;
         operator = '';
     }
 }
@@ -607,6 +610,7 @@ function handleState4(input) {
     }
     if (input === "=") {
         if (operator === "/" && operand1 === 0) {
+            console.log("%cError: %cYou can't divide by zero", "color :red; font-weight:bold", "color:white")
             isError = true;
             state = 5;
             return;
@@ -623,7 +627,7 @@ function handleState4(input) {
     if (input === "m+") {
         isMemoryAdded = true;
         memoryValue += +currentValue;
-        state = 9;
+        state = 11;
     }
 }
 
@@ -637,10 +641,11 @@ function handleState5(input) {
     }
     if (input === "back") {
         clear();
-    }
+    } 
 }
 
-//6.M+ Composing Digit
+
+//6.M+ Post Memory Store
 function handleState6(input) {
     if (input === "power") {
         powerOff();
@@ -648,6 +653,57 @@ function handleState6(input) {
     if (input === "clear") {
         clear();
         state = 6;
+    }
+    // if (input === "back") {
+    // }
+    if (input >= "0" && input <= "9") {
+        state = 7;
+        currentValue = input;
+        operator = "";
+        return;
+    }
+    if (input === "decimal") {
+        state = 7;
+        currentValue = "0.";
+        return;
+    }
+    if (input === "+" || input === "-" || input === "*" || input === "/") {
+        operand1 = +currentValue;
+        operator = input;
+        state = 10;
+        return;
+    }
+    if (input === "sign") {
+        if (currentValue[0] === "-") {
+            currentValue = currentValue.substring(1);
+            return;
+        }
+        if (currentValue !== "0") {
+            currentValue = "-" + currentValue;
+        }
+    }
+    if (input === "sqrt") {
+        currentValue = trimDecimals(sqrtM(currentValue));
+        state = 11;
+    }
+    // if (input === "=") {
+    // }
+    if (input === "m+") {
+        memoryValue += +currentValue;
+    }
+    if (input === 'mr') {
+        currentValue = memoryValue.toString();
+        state = 7;
+    }
+}
+
+//7.M+ Composing Digit
+function handleState7(input) {
+    if (input === "power") {
+        powerOff();
+    }
+    if (input === "clear") {
+        clear();
     }
     if (input === "back") {
         back();
@@ -678,7 +734,7 @@ function handleState6(input) {
     }
     if (input === "+" || input === "-" || input === "*" || input === "/") {
         operand1 = +currentValue;
-        state = 7;
+        state = 8;
         operator = input;
         return;
     }
@@ -692,31 +748,35 @@ function handleState6(input) {
         }
     }
     if (input === "sqrt") {
-        currentValue = trimDecimals(sqrt(currentValue));
+        currentValue = trimDecimals(sqrtM(currentValue));
+        state = 11;
     }
     if (input === "m+") {
-        isMemoryAdded = true;
         memoryValue += +currentValue;
-        state = 7;
     }
     if (input === 'mr') {
         currentValue = memoryValue.toString();
-        state = 7;
     }
 }
 
-//7. M+ Waiting input
-function handleState7(input) {
+//8. M+ Waiting input
+function handleState8(input) {
     if (input === "power") {
         powerOff();
     }
     if (input === "clear") {
         clear();
-        state = 6;
+        state = 7;
     }
     if (input >= "0" && input <= "9") {
+        state = 10;
         operand1 = +currentValue;
         currentValue = input;
+        return;
+    }
+    if (input === "decimal") {
+        state = 10;
+        currentValue = "0.";
         return;
     }
     if (input === "+" || input === "-" || input === "*" || input === "/") {
@@ -734,47 +794,115 @@ function handleState7(input) {
         }
     }
     if (input === "sqrt") {
-        if (currentValue[0] === "-") {
-            state = 10;
-            isError = true;
-            return;
-        }
-        state = 9;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));
+        currentValue = trimDecimals(sqrtM(currentValue));
     }
     if (input === "=") {
         if (operator === "/" && currentValue === "0") {
             isError = true;
-            state = 10;
+            state = 12;
             return;
         }
-        state = 9;
+        state = 11;
         currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
         if (getDigitAbsoluteLength(currentValue) > maxChars) {
             isError = true;
-            state = 10;
+            state = 12;
         }
         return;
     }
     if (input === "m+") {
-        state = 9;
+        state = 6;
         isMemoryAdded = true;
         memoryValue += +currentValue;
     }
     if (input === 'mr') {
         currentValue = memoryValue.toString();
-        state = 7;
+        state = 9;
     }
 }
 
-//8. M+ Composing next operand
-function handleState8(input) {
+//9. M+ Post Memory Recall Op2
+function handleState9(input) {
     if (input === "power") {
         powerOff();
     }
     if (input === "clear") {
         clear();
-        state = 6;
+        state = 7;
+    }
+    // if (input === "back") {       
+    // }
+    if (input >= "0" && input <= "9") {
+        currentValue = '';     
+        currentValue += input;
+        state = 10;
+        return;
+    }
+    if (input === "decimal") {
+        state = 10;
+        currentValue = "0.";
+        return;
+    }
+    if (input === "+" || input === "-" || input === "*" || input === "/") {
+        if (operator === "/" && currentValue === "0") {
+            isError = true;
+            state = 12;
+            return;
+        }
+        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        operator = input;
+        operand1 = currentValue;
+        state = 11;
+        return;
+    }
+    if (input === "sign") {
+        if (currentValue[0] === "-") {
+            currentValue = currentValue.substring(1);
+            return;
+        }
+        if (currentValue !== "0") {
+            currentValue = "-" + currentValue;
+        }
+    }
+    if (input === "sqrt") {
+        currentValue = trimDecimals(sqrtM(currentValue));
+    }
+    if (input === "=") {
+        if (operator === "/" && currentValue === "0") {
+            isError = true;
+            state = 12;
+            return;
+        }
+        state = 11;
+        let tmp = +currentValue;
+        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        operand1 = tmp;
+        if (getDigitAbsoluteLength(currentValue) > maxChars) {
+            isError = true;
+            state = 12;
+        }
+        return;
+    }
+    if (input === "%") {
+        currentValue = trimDecimals(calculatePercentage(operand1, +currentValue, operator));
+        state = 11;
+    }
+    if (input === "m+") {
+        memoryValue += + currentValue;
+    }
+    if (input === 'mr') {
+        currentValue = memoryValue.toString();        
+    }
+}
+
+//10. M+ Composing next operand
+function handleState10(input) {
+    if (input === "power") {
+        powerOff();
+    }
+    if (input === "clear") {
+        clear();
+        state = 7;
     }
     if (input === "back") {
         back();
@@ -787,16 +915,27 @@ function handleState8(input) {
         currentValue += input;
         return;
     }
+    if (input === "decimal") {
+        if (currentValue.includes(".")) {
+            return;
+        }
+        if (currentValue === "0") {
+            currentValue = "0.";
+        } else {
+            currentValue += ".";
+        }
+        return;
+    }
     if (input === "+" || input === "-" || input === "*" || input === "/") {
         if (operator === "/" && currentValue === "0") {
             isError = true;
-            state = 10;
+            state = 12;
             return;
         }
         currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
         operator = input;
         operand1 = currentValue;
-        state = 6;
+        state = 11;
         return;
     }
     if (input === "sign") {
@@ -809,39 +948,34 @@ function handleState8(input) {
         }
     }
     if (input === "sqrt") {
-        currentValue = trimDecimals(sqrt(currentValue));
+        currentValue = trimDecimals(sqrtM(currentValue));
     }
     if (input === "=") {
         if (operator === "/" && currentValue === "0") {
             isError = true;
-            state = 10;
+            state = 12;
             return;
         }
-        state = 9;
+        state = 11;
         let tmp = +currentValue;
         currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
         operand1 = tmp;
         if (getDigitAbsoluteLength(currentValue) > maxChars) {
             isError = true;
-            state = 10;
+            state = 12;
         }
         return;
     }
     if (input === "%") {
         currentValue = trimDecimals(calculatePercentage(operand1, +currentValue, operator));
-    }
-    if (input === "decimal") {
-        if (currentValue.includes(".")) {
+        state = 11;
+    }   
+    if (input === "m+") {
+        if (operator === "/" && currentValue === "0") {
+            isError = true;
+            state = 12;
             return;
         }
-        if (currentValue === "0") {
-            currentValue = "0.";
-        } else {
-            currentValue += ".";
-        }
-        return;
-    }
-    if (input === "m+") {
         isMemoryAdded = true;
         memoryValue += + currentValue;
         currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
@@ -854,30 +988,30 @@ function handleState8(input) {
     }
 }
 
-//9. M+ Show calculated result
-function handleState9(input) {
+//11. M+ Show calculated result
+function handleState11(input) {
     if (input === "power") {
         powerOff();
     }
     if (input === "clear") {
         clear();
-        state = 6;
+        state = 7;
     }
     if (input >= "0" && input <= "9") {
-        state = 6;
+        state = 7;
         currentValue = input;
         operator = "";
         return;
     }
     if (input === "decimal") {
-        state = 8;
+        state = 7;
         currentValue = "0.";
         return;
     }
     if (input === "+" || input === "-" || input === "*" || input === "/") {
         operand1 = +currentValue;
         operator = input;
-        state = 7;
+        state = 8;
         return;
     }
     if (input === "sign") {
@@ -890,36 +1024,35 @@ function handleState9(input) {
         }
     }
     if (input === "sqrt") {
-        currentValue = trimDecimals(sqrt(currentValue));
+        currentValue = trimDecimals(sqrtM(currentValue));
     }
     if (input === "=") {
         if (operator === "/" && operand1 === 0) {
+            console.log("%cError: %cYou can't divide by zero", "color :red; font-weight:bold", "color:white")
             isError = true;
-            state = 10;
+            state = 12;
             return;
         }
-        state = 9;
+        state = 11;
         currentValue = trimDecimals(calculateResult(+currentValue, operand1, operator));
 
         if (getDigitAbsoluteLength(currentValue) > maxChars) {
             isError = true;
-            state = 10;
+            state = 12;
         }
         return;
     }
     if (input === "m+") {
-        isMemoryAdded = true;
         memoryValue += +currentValue;
-        state = 9;
     }
     if (input === 'mr') {
         currentValue = memoryValue.toString();
-        state = 8;
+        state = 9;
     }
 }
 
-//10. M+ Error
-function handleState10(input) {
+//12. M+ Error
+function handleState12(input) {
     if (input === "power") {
         powerOff();
     }
@@ -930,11 +1063,7 @@ function handleState10(input) {
     if (input === "back") {
         clear();
         state = 6;
-    }
-    if (input === 'mr') {
-        currentValue = memoryValue.toString();
-        state = 7;
-    }
+    }  
 }
 
 function powerOff() {
@@ -1024,6 +1153,22 @@ function sqrt(radicand) {
         return 0;
     }
     state = 4;
+    return Math.sqrt(+radicand);
+}
+
+/**
+ * Calculates square root in states with memory present.
+ *
+ * @param {string} radicand - The radicand.
+ * @returns {number} The result of calculation.
+ */
+function sqrtM(radicand) {
+    if (radicand[0] === "-") {
+        state = 12;
+        isError = true;
+        return 0;
+    }
+    state = 11;
     return Math.sqrt(+radicand);
 }
 

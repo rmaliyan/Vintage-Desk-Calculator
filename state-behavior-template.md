@@ -5,20 +5,22 @@ States:
 3. Composing next Operand
 4. Show calculated result
 5. Error without memory
-6. Composing Digit
-7. M+ Waiting input
-8. M+ Composing next operand
-9. M+ Show calculated result
-10. M+ Error
+6. M+ Post Memory Store
+7. M+ Composing Digit
+8. M+ Waiting input
+9. M+ Post Memory Recall Op2
+10. M+ Composing next operand
+11. M+ Show calculated result
+12. M+ Error
 
 ToDo:
-[-] On mobile screen calculator sides touch screen borders.
+[v] On mobile screen calculator sides touch screen borders.
 [-] On zen on linux and on android phone decimal dots move up. Try to rewrite this part without absolute positions.
 [v] Add keyboard functionality.
 [-] Check percentage in different states. 
 [v] 15 * 8 M+ should add 120 to memory, now it adds 8. Pressing M+ second time does nothing. Should add 120 to memory resulting in 240 kept in memory, ready to recall.
 [v] 15*8 M+ / 8 becomes 1208. Appending 8 instead of starting to compose second operand.
-[-] Add favicon
+[v] Add favicon
 [-] Treating anything numerically zero (after trimming) as “divide by zero” (0.0 or 0.0000000001).
 [-] While handling key pressing, avoid default behaviour only for the keys that are mapped so the browser hotkeys are not broken.
 [-] Add current value to clipboard on Ctrl+C
@@ -26,7 +28,8 @@ ToDo:
 [-] Find a way to better convey that adding jsdoc comments before functions is a conscious decision to introduce myself to the standards
 [-] Rewrite beheviour template.
 [-] Redraw beheviour graph in figma and add an image to repository.
-
+[-] Merge sqrt and sqerM into one function, performing a state check before state change
+[-] Place console messages in corresponding scenarios
 
 State 0 - Calc Off
 Input           | Effect / Next State
