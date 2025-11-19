@@ -12,9 +12,11 @@ States:
 10. M+ Composing next operand
 11. M+ Show calculated result
 12. M+ Error
+13. Show result with first operand saved 
 
 ToDo:
-[v] On mobile screen calculator sides touch screen borders.
+[v] On mobile screens calculator sides touch screen borders.
+[-] On mobile android chrome screen still calculator sides touch screen borders.
 [-] On zen on linux and on android phone decimal dots move up. Try to rewrite this part without absolute positions.
 [v] Add keyboard functionality.
 [-] Check percentage in different states. 
@@ -30,12 +32,25 @@ ToDo:
 [-] Redraw beheviour graph in figma and add an image to repository.
 [-] Merge sqrt and sqerM into one function, performing a state check before state change
 [-] Place console messages in corresponding scenarios
+[v] 25 + sqrt -> 5 , 3 = shows nothing, should show 25+3-> 28 (make consecuential calculations)
+[v] 25 + sqrt -> 5 , 3 - shows nothing, should show 25+3-> 28 (make calculation one)
+[v] 25 + sqrt -> 5 , 3 - 28 - 3 - -> 25
+[-] 25 sqrt -> 5 , 3 - should shows nothing
+[-] 6 * M+ 2 = does nothing should show result -> 12 (desk calculator has a bug, 6 * M+ shows 36)
+[-] 8 / M+ 2 = does nothing should show result -> 4 (desk calculator has a bug, 6 * M+ shows 0.125)
+[-] 6 + M+ 2 = does nothing should show result -> 8
+[-] 5 + 6 = 11, 3 = should show 9, shows nothing
+[-] 6 + 3 -> 9 - 2 =  should show 7, shows nothing
+[-] 2 + 3 + -> 5,  2 = nothing
+[-] 1 + 3 = 4, 5 + 4 = 9  
+
 
 State 0 - Calc Off
 Input           | Effect / Next State
 --------------- | ----------------------------------------------------------
 power           | Initializes calculator: state -> 1, currentValue -> "0", operator cleared, memory reset
-clear/back      | Ignored (device off)
+clear           | Ignored (device off)
+back            | Ignored (device off)
 digits 0-9      | Ignored (device off)
 decimal         | Ignored (device off)
 +, -, *, /      | Ignored (device off)
@@ -51,17 +66,85 @@ State 1 - Composing Digit
 Input           | Effect / Next State
 --------------- | ----------------------------------------------------------
 power           | Calls powerOff(); transitions to state 0
-clear/back      | clear() resets to 0 and remains in state 1; back() removes last digit or returns to 0
-digits 0-9      | Replaces 0 with digit or appends (until maxChars); stays in state 1
-decimal         | Adds decimal point if missing; stays in state 1
+clear           | clear() resets to 0
+back            | back() removes last digit or returns to 0
+digits 0-9      | Replaces 0 with digit or appends (until maxChars)
+decimal         | Adds decimal point if missing
 +, -, *, /      | Stores currentValue as operand1, sets operator, moves to state 2
 sign            | Toggles minus sign when value != 0
 sqrt            | Uses sqrt helper; negative radicand -> state 5 (error), otherwise state 4 with result
 %               | n/a
 =               | n/a
-m+              | n/a
+m+              | Adds currentValue to memoryValue, turns memory indicator on, transitions to state 6
 mr              | n/a
 OTHER NOTES     | Default input state right after power-on or digit entry
+
+State 2 - Waiting Input
+Input           | Effect / Next State
+--------------- | ----------------------------------------------------------
+power           | powerOff(); -> state 0
+clear/back      | clear(); -> state 1
+digits 0-9      | Starts composing second operand, currentValue = digit, state -> 3
+decimal         | Starts composing second operand, currentValue = "0.", state -> 3
++, -, *, /      | Updates operator
+sign            | Toggles sign of currentValue; state -> 3
+sqrt            | Negative -> state 5 error; otherwise performs sqrt, result shown in state 13
+%               | n/a
+=               | Calculates operand1 (left) op currentValue (right); divide-by-zero or overflow -> state 5; success -> state 4
+m+              | Adds currentValue to memoryValue, turns memory indicator on, transitions to state 7
+mr              | n/a
+OTHER NOTES     | User has entered first operand and operator, waiting for next number or command
+
+State 7 - M+ Composing Digit
+Input           | Effect / Next State
+--------------- | ----------------------------------------------------------
+power           | Calls powerOff(); transitions to state 0
+clear           | clear() resets to 0
+back            | back() removes last digit or returns to 0
+digits 0-9      | Replaces 0 with digit or appends (until maxChars)
+decimal         | Adds decimal point if missing
++, -, *, /      | Stores currentValue as operand1, sets operator, moves to state 8
+sign            | Toggles minus sign when value != 0
+sqrt            | Uses sqrt helper; negative radicand -> state 5 (error), otherwise state 4 with result
+%               | n/a
+=               | n/a
+m+              | Adds currentValue to memoryValue 
+mr              | recalls memoryValue to currentValue
+OTHER NOTES     | Input state with stored memory
+
+State 8 - M+ Waiting Input
+Input           | Effect / Next State
+--------------- | ----------------------------------------------------------
+power           | powerOff(); -> state 0
+clear/back      | clear(); -> state 7
+digits 0-9      | Starts composing second operand, currentValue = digit, state -> 10
+decimal         | Starts composing second operand, currentValue = "0.", state -> 10
++, -, *, /      | Updates operator
+sign            | Toggles sign of currentValue; state -> 10
+sqrt            | Negative -> state 5 error; otherwise performs sqrt, result shown in state 9
+%               | n/a
+=               | Calculates operand1 (left) op currentValue (right); divide-by-zero or overflow -> state 5; success -> state 4
+m+              | Adds currentValue to memoryValue, turns memory indicator on, transitions to state 7
+mr              | n/a
+OTHER NOTES     | User has entered first operand and operator, waiting for next number or command
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 State 2 - Waiting Input
 Input           | Effect / Next State

@@ -296,15 +296,16 @@ const maxChars = 9;
 
 let state = 0;
 
-let currentValue = '';
+let currentValue = null;
 let operator = null;
 let isMemoryAdded = false;
 let isError = false;
+let isFirstOperation = true;
 let memoryValue = null;
 let operand1 = null;
 
 function onUserInput(input) {
-    switch (state) {
+       switch (state) {
         //0. Calc Off
         case 0:
             if (input === "power") {
@@ -314,55 +315,79 @@ function onUserInput(input) {
                 isMemoryAdded = false;
                 isError = false;
                 memoryValue = 0;
-            }
+            }            
+            debugPrintValues(); 
             break;
         //1. Composing Digit
         case 1:
             handleState1(input);
+            debugPrintValues();
             break;
         //2. Waiting Input
         case 2:
             handleState2(input);
+            debugPrintValues();
             break;
         //3. Composing Next Operand
         case 3:
             handleState3(input);
+            debugPrintValues();
             break;
-        //4. Show calculated result
+        //4. Show calculated result (first time)
         case 4:
             handleState4(input);
+            debugPrintValues();
             break;
         //5. Error without memory
         case 5:
             handleState5(input);
+            debugPrintValues();
             break;
         //6. M+ Post Memory Store
         case 6:
             handleState6(input);
+            debugPrintValues();
             break;
         //7. M+ Composing Digit
         case 7:
             handleState7(input);
+            debugPrintValues();
             break;
         //8. M+ Waiting input
         case 8:
             handleState8(input);
+            debugPrintValues();
             break;
         //9. M+ Post Memory Recall Op2
         case 9:
             handleState9(input);
+            debugPrintValues();
             break;
         //10. M+ Composing second operand
         case 10:
             handleState10(input);
+            debugPrintValues();
             break;
         //11. M+ Show calculated result
         case 11:
             handleState11(input);
+            debugPrintValues();
             break;
         //12. M+ Error
         case 12:
             handleState12(input);
+            debugPrintValues();
+            break;
+        //13. Show result with first operand saved 
+        case 13:
+            handleState13(input);
+            debugPrintValues();
+            break;
+        //14. Show calculated result (not first time)
+        //Probably redundant
+        case 14:
+            handleState13(input);
+            debugPrintValues();
             break;
     }
     setScreen(currentValue, isMemoryAdded, isError);
@@ -436,15 +461,16 @@ function handleState2(input) {
     if (input === "clear") {
         clear();
     }
-    if (input >= "0" && input <= "9") {
-        state = 3;
-        operand1 = +currentValue;
+    if (input >= "0" && input <= "9") {        
+        //check if this commented line needed at some point       
+        // operand1 = +currentValue;
         currentValue = input;
-        return;
-    }
-    if (input === "decimal") {
         state = 3;
+        return;        
+    }
+    if (input === "decimal") {        
         currentValue = "0.";
+        state = 3;
         return;
     }
     if (input === "+" || input === "-" || input === "*" || input === "/") {
@@ -452,17 +478,20 @@ function handleState2(input) {
         return;
     }
     if (input === "sign") {
-        operand1 = +currentValue;
+        //check if this commented line needed at some point
+        // operand1 = +currentValue;
         if (currentValue[0] === "-") {
             currentValue = currentValue.substring(1);
             return;
         }
         if (currentValue !== "0") {
             currentValue = "-" + currentValue;
+            state = 3;
         }
     }
     if (input === "sqrt") {
         currentValue = trimDecimals(sqrt(currentValue));
+        state = 13;
     }
     if (input === "=") {
         if (operator === "/" && currentValue === "0") {
@@ -478,7 +507,7 @@ function handleState2(input) {
         }
         return;
     }
-    if (input === "m+") {        
+    if (input === "m+") {
         state = 6;
         isMemoryAdded = true;
         memoryValue += +currentValue;
@@ -523,6 +552,7 @@ function handleState3(input) {
             state = 5;
             return;
         }
+        isFirstOperation = false;
         currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
         operator = input;
         operand1 = +currentValue;
@@ -540,8 +570,9 @@ function handleState3(input) {
     }
     if (input === "sqrt") {
         currentValue = trimDecimals(sqrt(currentValue));
+        state = 13;
     }
-    if (input === "=") {
+    if (input === "=") {        
         if (operator === "/" && currentValue === "0") {
             console.log("%cError: %cYou can't divide by zero", "color :red; font-weight:bold", "color:white")
             isError = true;
@@ -561,7 +592,7 @@ function handleState3(input) {
     if (input === "%") {
         if (!operator) return;
         currentValue = trimDecimals(calculatePercentage(operand1, +currentValue, operator));
-    }   
+    }
     if (input === "m+") {
         isMemoryAdded = true;
         currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
@@ -580,9 +611,74 @@ function handleState4(input) {
         clear();
     }
     if (input >= "0" && input <= "9") {
-        state = 1;
+        if (isFirstOperation) {            
+            state = 1; //
+            currentValue = input;
+            operator = "";
+            return;
+        }
+        state = 3;
         currentValue = input;
+        return;
+    }
+    if (input === "decimal") {
+        state = 1;        
+        currentValue = "0.";
         operator = "";
+        return;
+    }
+    if (input === "+" || input === "-" || input === "*" || input === "/") {
+        operand1 = +currentValue;
+        operator = input;
+        state = 2;
+        return;
+    }
+    if (input === "sign") {
+        if (currentValue[0] === "-") {
+            currentValue = currentValue.substring(1);
+            return;
+        }
+        if (currentValue !== "0") {
+            currentValue = "-" + currentValue;
+        }
+    }
+    if (input === "sqrt") {
+        currentValue = trimDecimals(sqrt(currentValue));
+    }
+    if (input === "=") {
+        if (operator === "/" && operand1 === 0) {
+            console.log("%cError: %cYou can't divide by zero", "color :red; font-weight:bold", "color:white")
+            isError = true;
+            state = 5;
+            return;
+        }
+        state = 4;
+        currentValue = trimDecimals(calculateResult(+currentValue, operand1, operator));
+
+        if (getDigitAbsoluteLength(currentValue) > maxChars) {
+            isError = true;
+            state = 5;
+        }
+        return;
+    }
+    if (input === "m+") {
+        isMemoryAdded = true;
+        memoryValue += +currentValue;
+        state = 11;
+    }
+}
+
+//14. Show calculated result
+function handleState14(input) {
+    if (input === "power") {
+        powerOff();
+    }
+    if (input === "clear") {
+        clear();
+    }
+    if (input >= "0" && input <= "9") {
+        state = 3;
+        currentValue = input;
         return;
     }
     if (input === "decimal") {
@@ -641,7 +737,7 @@ function handleState5(input) {
     }
     if (input === "back") {
         clear();
-    } 
+    }
 }
 
 
@@ -768,15 +864,16 @@ function handleState8(input) {
         clear();
         state = 7;
     }
-    if (input >= "0" && input <= "9") {
-        state = 10;
-        operand1 = +currentValue;
+    if (input >= "0" && input <= "9") { 
+        //check if this commented line needed at some point       
+        // operand1 = +currentValue;
         currentValue = input;
+        state = 10;
         return;
     }
-    if (input === "decimal") {
-        state = 10;
+    if (input === "decimal") {        
         currentValue = "0.";
+        state = 10;
         return;
     }
     if (input === "+" || input === "-" || input === "*" || input === "/") {
@@ -784,17 +881,21 @@ function handleState8(input) {
         return;
     }
     if (input === "sign") {
-        operand1 = +currentValue;
+        //check if this commented line needed at some point
+        // operand1 = +currentValue;
         if (currentValue[0] === "-") {
             currentValue = currentValue.substring(1);
             return;
         }
         if (currentValue !== "0") {
             currentValue = "-" + currentValue;
+            state = 10;
         }
     }
     if (input === "sqrt") {
         currentValue = trimDecimals(sqrtM(currentValue));
+        //not sure if should be 9 or a completely new state "M+ Show result with first operand saved"
+        state = 9;
     }
     if (input === "=") {
         if (operator === "/" && currentValue === "0") {
@@ -833,7 +934,7 @@ function handleState9(input) {
     // if (input === "back") {       
     // }
     if (input >= "0" && input <= "9") {
-        currentValue = '';     
+        currentValue = '';
         currentValue += input;
         state = 10;
         return;
@@ -891,7 +992,7 @@ function handleState9(input) {
         memoryValue += + currentValue;
     }
     if (input === 'mr') {
-        currentValue = memoryValue.toString();        
+        currentValue = memoryValue.toString();
     }
 }
 
@@ -969,7 +1070,7 @@ function handleState10(input) {
     if (input === "%") {
         currentValue = trimDecimals(calculatePercentage(operand1, +currentValue, operator));
         state = 11;
-    }   
+    }
     if (input === "m+") {
         if (operator === "/" && currentValue === "0") {
             isError = true;
@@ -1063,22 +1164,95 @@ function handleState12(input) {
     if (input === "back") {
         clear();
         state = 6;
-    }  
+    }
+}
+
+//13. Show result with first operand saved
+function handleState13(input) {
+    if (input === "power") {
+        powerOff();
+    }
+    if (input === "clear") {
+        clear();
+    }
+    if (input >= "0" && input <= "9") {
+        currentValue = input;
+        state = 3;
+        return;
+    }
+    if (input === "decimal") {
+        state = 3;
+        currentValue = "0.";
+        return;
+    }
+    if (input === "+" || input === "-" || input === "*" || input === "/") {
+        if (operator === "/" && currentValue === "0") {
+            console.log("%cError: %cYou can't divide by zero", "color :red; font-weight:bold", "color:white")
+            isError = true;
+            state = 5;
+            return;
+        }
+        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        operator = input;
+        operand1 = +currentValue;
+        state = 4;
+        return;
+    }
+    if (input === "sign") {
+        if (currentValue[0] === "-") {
+            currentValue = currentValue.substring(1);
+            return;
+        }
+        if (currentValue !== "0") {
+            currentValue = "-" + currentValue;
+        }
+    }
+    if (input === "sqrt") {
+        currentValue = trimDecimals(sqrt(currentValue));
+    }
+    if (input === "=") {
+        if (operator === "/" && operand1 === 0) {
+            console.log("%cError: %cYou can't divide by zero", "color :red; font-weight:bold", "color:white")
+            isError = true;
+            state = 5;
+            return;
+        }
+        state = 4;
+        currentValue = trimDecimals(calculateResult(+currentValue, operand1, operator));
+
+        if (getDigitAbsoluteLength(currentValue) > maxChars) {
+            isError = true;
+            state = 5;
+        }
+        return;
+    }
+    if (input === "m+") {
+        isMemoryAdded = true;
+        memoryValue += +currentValue;
+        //check, mb this should be 9
+        state = 11;``
+    }
 }
 
 function powerOff() {
     state = 0;
     currentValue = "";
+    operand1 = null;
+    operator = "";
     isMemoryAdded = false;
     isError = false;
+    isFirstOperation = true;
+    console.clear();
 }
 
 function clear() {
     state = 1;
     currentValue = "0";
     isError = false;
+    isFirstOperation = true;
     operator = "";
-    operand1 = 0;
+    operand1 = null;
+    console.clear();
 }
 
 function back() {
@@ -1203,7 +1377,6 @@ function calculateResult(leftSideOperand, rightSideOperand, operation) {
  * @param {string} operation - operation.
  * @returns {number} The result of calculation.
  */
-
 function calculatePercentage(leftSideOperand, rightSideOperand, operation) {
     if (operation === "+") {
         return leftSideOperand + ((leftSideOperand * rightSideOperand) / 100);
@@ -1217,4 +1390,65 @@ function calculatePercentage(leftSideOperand, rightSideOperand, operation) {
     if (operation === "/") {
         return (leftSideOperand * 100) / rightSideOperand;
     }
+}
+
+/**
+ * Prints the calculator's internal state values as a formatted and color-styled
+ * ASCII table in the browser console.
+ *
+ * The function inspects a predefined set of global variables: 
+ * - state
+ * - operand1
+ * - operator
+ * - currentValue
+ * - isMemoryAdded
+ * - isError
+ * - isFirstOperation
+ *
+ * Each row is styled based on the variable’s type:
+ * - Numbers → blue styling
+ * - Strings → orange styling
+ * - Other → default console color (white)
+ *
+ * The output includes:
+ * - Variable name
+ * - Current value
+ * - Value type (e.g. "number", "string", "boolean")
+ *
+ * The function is intended purely for debugging and visual inspection.
+ * It does not return anything.
+ */
+function debugPrintValues() {
+    const blue = "color: #4ea3ff; font-weight: bold;";
+    const orange = "color: #ffa64d; font-weight: bold;";
+    const reset = "color: inherit;";
+    const numberColors = [blue, reset, blue, reset, blue, reset];
+    const stringColors = [orange, reset, orange, reset, orange, reset];
+    const otherColors = [reset, reset, reset, reset, reset, reset];    
+    function variableColor(variable) {
+        if (typeof variable === "number") {
+            return numberColors;
+        }
+        if (typeof variable === "string") {
+            return stringColors;
+        }       
+        return otherColors;
+    }
+    function pad(str, len) {
+        return String(str).padEnd(len, " ");
+    }
+    const COL1 = 18;
+    const COL2 = 10;
+    const COL3 = 10;
+    console.log("┌───────────────────┬───────────┬───────────┐");
+    console.log(`│ ${pad("Name", COL1)}│ ${pad("Value", COL2)}│ ${pad("Type", COL3)}│`);
+    console.log("├───────────────────┼───────────┼───────────┤");
+    console.log(`│ %c${pad("state", COL1)}%c│ %c${pad(state, COL2)}%c│ %c${pad(typeof state, COL3)}%c│`, ...variableColor(state));
+    console.log(`│ %c${pad("operand1", COL1)}%c│ %c${pad(operand1, COL2)}%c│ %c${pad(typeof operand1, COL3)}%c│`, ...variableColor(operand1));
+    console.log(`│ %c${pad("operator", COL1)}%c│ %c${pad(operator, COL2)}%c│ %c${pad(typeof operator, COL3)}%c│`, ...variableColor(operator));
+    console.log(`│ %c${pad("currentValue", COL1)}%c│ %c${pad(currentValue, COL2)}%c│ %c${pad(typeof currentValue, COL3)}%c│`, ...variableColor(currentValue));
+    console.log(`│ %c${pad("isMemoryAdded", COL1)}%c│ %c${pad(isMemoryAdded, COL2)}%c│ %c${pad(typeof isMemoryAdded, COL3)}%c│`, ...variableColor(isMemoryAdded));
+    console.log(`│ %c${pad("isError", COL1)}%c│ %c${pad(isError, COL2)}%c│ %c${pad(typeof isError, COL3)}%c│`, ...variableColor(isError));
+    console.log(`│ %c${pad("isFirstOperation", COL1)}%c│ %c${pad(isFirstOperation, COL2)}%c│ %c${pad(typeof isFirstOperation, COL3)}%c│`, ...variableColor(isFirstOperation));
+    console.log("└───────────────────┴───────────┴───────────┘");
 }
