@@ -156,6 +156,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#buttonSquareRoot .buttonGlare').insertAdjacentHTML('beforebegin', squareRootButtonSVG);
 });
 
+window.addEventListener("load", (event) => {
+    state = 1;
+    currentValue = "0";
+    operator = "";
+    isMemoryAdded = false;
+    isError = false;
+    memoryValue = 0;
+    setScreen(currentValue, isMemoryAdded, isError);
+    debugPrintValues();
+});
+
 function handleKeys(event) {
     if (event.key >= '0' && event.key <= '9') {
         onUserInput(event.key);
@@ -1419,6 +1430,7 @@ function calculatePercentage(leftSideOperand, rightSideOperand, operation) {
  * It does not return anything.
  */
 function debugPrintValues() {
+    console.clear();
     const blue = "color: #4ea3ff; font-weight: bold;";
     const orange = "color: #ffa64d; font-weight: bold;";
     const reset = "color: inherit;";

@@ -44,6 +44,8 @@ ToDo:
 [-] 2 + 3 + -> 5,  2 = nothing
 [-] 1 + 3 = 4, 5 + 4 = 9  
 
+[-] 999999999 + 1 does not show erroe and calculates 1
+
 
 State 0 - Calc Off
 Input           | Effect / Next State
@@ -120,7 +122,7 @@ clear/back      | clear(); -> state 7
 digits 0-9      | Starts composing second operand, currentValue = digit, state -> 10
 decimal         | Starts composing second operand, currentValue = "0.", state -> 10
 +, -, *, /      | Updates operator
-sign            | Toggles sign of currentValue; state -> 10
+sign            | Toggles sign of currentValue; state -> 10d
 sqrt            | Negative -> state 5 error; otherwise performs sqrt, result shown in state 9
 %               | n/a
 =               | Calculates operand1 (left) op currentValue (right); divide-by-zero or overflow -> state 5; success -> state 4
