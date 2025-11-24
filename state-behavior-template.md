@@ -16,33 +16,33 @@ States:
 
 ToDo:
 [v] On mobile screens calculator sides touch screen borders.
-[-] On mobile android chrome screen still calculator sides touch screen borders.
-[-] On zen on linux and on android phone decimal dots move up. Try to rewrite this part without absolute positions.
+[v] On mobile android chrome screen still calculator sides touch screen borders.
+[v] On zen on linux and on android phone decimal dots move up. Try to rewrite this part without absolute positions.
 [v] Add keyboard functionality.
 [-] Check percentage in different states. 
 [v] 15 * 8 M+ should add 120 to memory, now it adds 8. Pressing M+ second time does nothing. Should add 120 to memory resulting in 240 kept in memory, ready to recall.
 [v] 15*8 M+ / 8 becomes 1208. Appending 8 instead of starting to compose second operand.
 [v] Add favicon
-[-] Treating anything numerically zero (after trimming) as “divide by zero” (0.0 or 0.0000000001).
+[v] Treating anything numerically zero (after trimming) as “divide by zero” (0.0 or 0.0000000001).
 [-] While handling key pressing, avoid default behaviour only for the keys that are mapped so the browser hotkeys are not broken.
 [-] Add current value to clipboard on Ctrl+C
-[-] Try adding hover state
+[x] Try adding hover state
 [-] Find a way to better convey that adding jsdoc comments before functions is a conscious decision to introduce myself to the standards
 [-] Rewrite beheviour template.
 [-] Redraw beheviour graph in figma and add an image to repository.
-[-] Merge sqrt and sqerM into one function, performing a state check before state change
+[x] Merge sqrt and sqerM into one function, performing a state check before state change
 [-] Place console messages in corresponding scenarios
 [v] 25 + sqrt -> 5 , 3 = shows nothing, should show 25+3-> 28 (make consecuential calculations)
 [v] 25 + sqrt -> 5 , 3 - shows nothing, should show 25+3-> 28 (make calculation one)
 [v] 25 + sqrt -> 5 , 3 - 28 - 3 - -> 25
-[-] 25 sqrt -> 5 , 3 - should shows nothing
-[-] 6 * M+ 2 = does nothing should show result -> 12 (desk calculator has a bug, 6 * M+ shows 36)
-[-] 8 / M+ 2 = does nothing should show result -> 4 (desk calculator has a bug, 6 * M+ shows 0.125)
-[-] 6 + M+ 2 = does nothing should show result -> 8
-[-] 5 + 6 = 11, 3 = should show 9, shows nothing
-[-] 6 + 3 -> 9 - 2 =  should show 7, shows nothing
-[-] 2 + 3 + -> 5,  2 = nothing
-[-] 1 + 3 = 4, 5 + 4 = 9  
+[v] 25 sqrt -> 5 , 3 - should shows nothing
+[v] 6 * M+ 2 = does nothing should show result -> 12 (desk calculator has a bug, 6 * M+ shows 36)
+[v] 8 / M+ 2 = does nothing should show result -> 4 (desk calculator has a bug, 6 * M+ shows 0.125)
+[v] 6 + M+ 2 = does nothing should show result -> 8
+[v] 5 + 6 = 11, 3 = should show 9, shows nothing
+[v] 6 + 3 -> 9 - 2 =  should show 7, shows nothing
+[v] 2 + 3 + -> 5,  2 = nothing
+[v] 1 + 3 = 4, 5 + 4 = 9  
 [-] 999999999 + 1 does not show error and calculates 1
 
 
