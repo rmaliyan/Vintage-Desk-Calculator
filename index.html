@@ -10,12 +10,7 @@
       type="image/webp"
       href="data:image/webp;base64, UklGRj4BAABXRUJQVlA4TDEBAAAvD8ADEA/CJpJsKfMOOdjAvwBIKdIr/P/v2mDQSJKiPvh38NJfHoMBxt1hGtm2k/OD+opi6L8JLCpHn7mXUSRJivK16GD9+9tjhgDcbfMvk/G9jukwTTewAg/QgOLiHAwiIEJAEMnWa5bZLcpPgKEfW9Epea4D2P+tjCEAwfIFZgAGBKAGAYFuhyQIrBWDCIFMLLuWgWSyn9zOpgUWYJkYzP9jmVy2upNKRjyJ317VUBSeQaRwGEm2aX3r6du2bf/8wzqoH8I590b0X2HaNowMHa+E/iiZ4Eqpanx/prVb4HqjTfpIOVpB80JEYmE0qcPpiCZ5qjVaF3GZRoj3uAe/r7+YZTvY8xV83v5ylSNKxhYLNi90rDcZK7qY07HdObpzmKc+NQ1j7FiaPZAeDphUAQA="
     />
-    <style>
-      /* * {
-        padding: 0px;
-        margin: 0px;        
-      } */
-
+    <style> 
       html {
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
@@ -59,34 +54,12 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        /* transform: perspective(1500px) rotateX(5deg); */
         transform-origin: center;
         transform: scale(var(--calc-scale));
-        /* background-color:orange; */
       }
-
-      /* @media (max-width: 480px) {
-        :root {
-          --calc-scale: 0.85;
-          --calc-drawn-width: calc(var(--calc-width) * var(--calc-scale));
-        }
-
-        body {
-          height: 90vh;
-          padding-left: max(12px, calc((100vw - var(--calc-drawn-width)) / 2));
-          padding-right: max(12px, calc((100vw - var(--calc-drawn-width)) / 2));
-        }
-
-        .calcContainer {
-          transform-origin: center;
-          transform: scale(var(--calc-scale));
-          height: 60%;
-        }
-      } */
 
       @media (max-width: 480px) {
         :root {
-          /* shrink calc so it always fits between side paddings */
           --calc-scale: min(
             1,
             calc((100vw - 2 * var(--page-padding)) / var(--calc-width))
@@ -95,7 +68,6 @@
       }
 
       .calculator {
-        /* position: absolute; */
         height: 565px;
         width: 449px;
         background: linear-gradient(
@@ -218,30 +190,14 @@
         width: fit-content;
       }
 
-      /* .Digit {
-        margin: 0 -1.5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 60px;
-        font-family: "Digital Mono";
-        font-size: 80px;
-        line-height: 0.85;
-        color: #bbcab5;
-        color: green;
-        background-color:orange;
-      } */
-
       .Digit {
         font-family: "Digital Mono";
         font-size: 80px;
         margin: 0 -1px;
         height: 85px;
         text-align: center;
-        /* line-height: 1.1; */
         color: #bbcab5;
         line-height: 1.2;
-        /* margin-top: 10px;  */
       }
 
       .digitSpan {
@@ -250,7 +206,6 @@
         justify-content: center;
         height: 1em;
         line-height: 1;
-        /* background-color: lightgray; */
       }
 
       .Digit.active {
@@ -262,9 +217,8 @@
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
-        padding-bottom: 25px;
+        padding-bottom: 20px;
         width: 5px;
-
         height: 100%;
       }
 
@@ -273,7 +227,6 @@
         height: 6px;
         border-radius: 2px;
         background-color: #bbcab5;
-        /* background-color: green; */
       }
 
       .decimalDot.active {
@@ -478,7 +431,6 @@
       }
 
       .buttons .buttonGray:active {
-        /* background: linear-gradient(0deg, rgba(85, 85, 85, 1) 80%, rgba(151, 151, 151, 1) 100%); */
         background: linear-gradient(
           0deg,
           rgba(92, 92, 92, 1) 80%,
