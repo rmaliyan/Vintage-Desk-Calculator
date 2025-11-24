@@ -43,8 +43,7 @@ ToDo:
 [-] 6 + 3 -> 9 - 2 =  should show 7, shows nothing
 [-] 2 + 3 + -> 5,  2 = nothing
 [-] 1 + 3 = 4, 5 + 4 = 9  
-
-[-] 999999999 + 1 does not show erroe and calculates 1
+[-] 999999999 + 1 does not show error and calculates 1
 
 
 State 0 - Calc Off

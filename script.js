@@ -1,3 +1,8 @@
+(() => {
+    if (/Android/i.test(navigator.userAgent)) {
+        document.documentElement.classList.add("android");
+    }
+})();
 const logoSVG = `<svg
                 draggable="false"
                 class="logo"
