@@ -24,8 +24,8 @@ ToDo:
 [v] 15*8 M+ / 8 becomes 1208. Appending 8 instead of starting to compose second operand.
 [v] Add favicon
 [v] Treating anything numerically zero (after trimming) as “divide by zero” (0.0 or 0.0000000001).
-[-] While handling key pressing, avoid default behaviour only for the keys that are mapped so the browser hotkeys are not broken.
-[-] Add current value to clipboard on Ctrl+C
+[v] While handling key pressing, avoid default behaviour only for the keys that are mapped so the browser hox`  x   tkeys are not broken.
+[v] Add current value to clipboard on Ctrl+C
 [x] Try adding hover state
 [-] Find a way to better convey that adding jsdoc comments before functions is a conscious decision to introduce myself to the standards
 [-] Rewrite beheviour template.
@@ -43,7 +43,13 @@ ToDo:
 [v] 6 + 3 -> 9 - 2 =  should show 7, shows nothing
 [v] 2 + 3 + -> 5,  2 = nothing
 [v] 1 + 3 = 4, 5 + 4 = 9  
+[-] redo buttons using css grid? 
+[-] redo calculator side using shadows instead of a second absolute div.
+
 [-] 999999999 + 1 does not show error and calculates 1
+[-] If calculation result is overflown state should change to error, before calling trimDecimals. 
+Ideally this should take place in a function called by state handlers. 
+TrimDecimals should 
 
 
 State 0 - Calc Off
