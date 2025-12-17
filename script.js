@@ -1359,31 +1359,31 @@ function getDigitAbsoluteLength(number) {
  * @param {number} decimalValue - Input value.
  * @returns {number} Trimmed value.
  */
-function trimDecimals(decimalValue) {
-    let result = decimalValue.toFixed(maxChars);
-
-    if (result[0] === "-") {
-        result = result.substring(0, maxChars + 2);
+function trimDecimals(decimalValue) {   
+    let fixedValue = decimalValue.toFixed(maxChars);
+    let intPart = fixedValue.split(".")[0];
+    let fracPart = fixedValue.split(".")[1] ?? "";  
+    let intDigits;
+    if (intPart[0] === "-") {
+        intDigits = intPart.length - 1;
+    } else {
+        intDigits = intPart.length;
     }
-    else {
-        result = result.substring(0, maxChars + 1);
-    }
 
-    let firstNonZeroIndex = result.length - 1;
-    for (let i = result.length - 1; i >= 0; i--) {
-        if (result[i] !== "0") {
-            firstNonZeroIndex = i;
-            break;
+    if (!fracPart || intDigits > maxChars) {
+        if (intPart === "-0") {
+            return "0"
         }
+        return intPart;
     }
-    result = result.substring(0, firstNonZeroIndex + 1);
-    if (result[result.length - 1] === ".") {
-        result = result.substring(0, result.length - 1);
+    const trimmedFrac = fracPart.replace(/0+$/, "");
+    if (!trimmedFrac) {
+        if (intPart === "-0") {
+            return "0"
+        }
+        return intPart;
     }
-    if (result === "-0") {
-        result = "0"
-    }
-    return result;
+    return `${intPart}.${trimmedFrac}`;
 }
 
 /**
