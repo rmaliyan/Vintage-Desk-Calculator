@@ -1137,8 +1137,7 @@ function handleState10(input) {
         isMemoryAdded = true;
         memoryValue += + currentValue;
         currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
-        state = 9;
-        operator = '';
+        state = 9;        
     }
     if (input === 'mr') {
         currentValue = memoryValue.toString();
@@ -1303,7 +1302,7 @@ function handleState13(input) {
         isMemoryAdded = true;
         memoryValue += +currentValue;
         //check, mb this should be 9
-        state = 11; ``
+        state = 11; 
     }
 }
 
@@ -1329,6 +1328,9 @@ function clear() {
 }
 
 function back() {
+    if (currentValue.length === 2 && currentValue[0] === "-") {
+        currentValue = '0';
+    }
     if (currentValue.length > 1) {
         currentValue = currentValue.substring(0, currentValue.length - 1);
     } else if (currentValue.length == 1) {
