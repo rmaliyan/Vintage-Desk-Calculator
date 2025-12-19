@@ -1,8 +1,3 @@
-(() => {
-    if (/Android/i.test(navigator.userAgent)) {
-        document.documentElement.classList.add("android");
-    }
-})();
 const logoSVG = `<svg
                 draggable="false"
                 class="logo"
@@ -477,6 +472,9 @@ function handleState1(input) {
         currentValue = trimDecimals(Math.sqrt(+currentValue));
     }
     if (input === "=") {
+        if (operator === "") {
+            return;
+        }
         if (operator === "/" && operand1 === 0) {
             console.log("%cError: %cYou can't divide by zero", "color :red; font-weight:bold", "color:white")
             isError = true;
