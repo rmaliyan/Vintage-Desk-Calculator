@@ -284,6 +284,12 @@ function setError(state) {
 }
 
 function setScreen(currentValue, isMemoryAdded, isError) {
+    if (getDigitAbsoluteLength(currentValue) > maxChars) {
+        setError(true);
+        currentValue = "0";
+        isError = true;
+    }
+
     for (let i = 0; i < maxChars; i++) {
         setDot(i, false)
     }
@@ -468,8 +474,10 @@ function handleState1(input) {
             currentValue = "0";
             return;
         }
+        if (!applyResult(Math.sqrt(+currentValue), 5)) {
+            return;
+        }
         state = 4;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));
     }
     if (input === "=") {
         if (operator === "") {
@@ -482,13 +490,10 @@ function handleState1(input) {
             state = 5;
             return;
         }
-        state = 4;
-        currentValue = trimDecimals(calculateResult(+currentValue, operand1, operator));
-
-        if (getDigitAbsoluteLength(currentValue) > maxChars) {
-            isError = true;
-            state = 5;
-        }
+        if (!applyResult(calculateResult(+currentValue, operand1, operator), 5)) {
+            return;
+        } 
+        state = 4;   
         return;
     }
     if (input === "m+") {
@@ -537,8 +542,10 @@ function handleState2(input) {
             currentValue = "0";
             return;
         }
+        if (!applyResult(Math.sqrt(+currentValue), 5)) {
+            return;
+        }
         state = 13;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));
     }
     if (input === "=") {
         if (operator === "/" && +currentValue === 0) {
@@ -548,12 +555,10 @@ function handleState2(input) {
             state = 5;
             return;
         }
-        state = 4;
-        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
-        if (getDigitAbsoluteLength(currentValue) > maxChars) {
-            isError = true;
-            state = 5;
-        }
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 5)) {
+            return;
+        } 
+        state = 4;     
         return;
     }
     if (input === "m+") {
@@ -602,7 +607,9 @@ function handleState3(input) {
             return;
         }
         isFirstOperation = false;
-        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 5)) {
+            return;
+        }
         operator = input;
         operand1 = +currentValue;
         state = 4;
@@ -623,36 +630,43 @@ function handleState3(input) {
             isError = true;
             currentValue = "0";
             return;
+        }     
+
+        if (!applyResult(Math.sqrt(+currentValue), 5)) {
+            return;
         }
         state = 13;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));
     }
     if (input === "=") {
-        if (operator === "/" && +currentValue === 0) {
+        if (operator === "/" &&
+             +currentValue === 0) {
             console.log("%cError: %cYou can't divide by zero", "color :red; font-weight:bold", "color:white")
             isError = true;
             currentValue = "0"
             state = 5;
             return;
         }
+       
+        const tmp = +currentValue;
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 5)) {
+            return;
+        }        
         state = 4;
-        let tmp = +currentValue;
-        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
-        operand1 = tmp;
-        if (getDigitAbsoluteLength(currentValue) > maxChars) {
-            isError = true;
-            state = 5;
-        }
+        operand1 = tmp;   
         return;
     }
     if (input === "%") {
         if (!operator) return;
-        currentValue = trimDecimals(calculatePercentage(operand1, +currentValue, operator));
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 5)) {
+            return;
+        }        
     }
     if (input === "m+") {
         isMemoryAdded = true;
         let tmp = +currentValue;
-        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 12)) {
+            return;
+        }
         memoryValue += + currentValue;
         operand1 = tmp;
         state = 7;
@@ -707,8 +721,10 @@ function handleState4(input) {
             currentValue = "0";
             return;
         }
+        if (!applyResult(Math.sqrt(+currentValue), 5)) {
+            return;
+        }
         state = 13;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));
     }
     if (input === "=") {
         if (operator === "/" && operand1 === 0) {
@@ -718,13 +734,10 @@ function handleState4(input) {
             state = 5;
             return;
         }
+        if (!applyResult(calculateResult(+currentValue, operand1, operator), 5)) {
+            return;
+        } 
         state = 4;
-        currentValue = trimDecimals(calculateResult(+currentValue, operand1, operator));
-
-        if (getDigitAbsoluteLength(currentValue) > maxChars) {
-            isError = true;
-            state = 5;
-        }
         return;
     }
     if (input === "m+") {
@@ -791,11 +804,11 @@ function handleState6(input) {
             currentValue = "0";
             return;
         }
+        if (!applyResult(Math.sqrt(+currentValue), 12)) {
+            return;
+        }
         state = 11;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));
-    }
-    // if (input === "=") {
-    // }
+    }    
     if (input === "m+") {
         memoryValue += +currentValue;
     }
@@ -863,8 +876,10 @@ function handleState7(input) {
             currentValue = "0";
             return;
         }
+        if (!applyResult(Math.sqrt(+currentValue), 12)) {
+            return;
+        }
         state = 11;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));
     }
     if (input === "=") {
         if (operator === "/" && +currentValue === 0) {
@@ -873,15 +888,12 @@ function handleState7(input) {
             state = 12;
             return;
         }
-        let tmp = +currentValue;
-        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
-        if (getDigitAbsoluteLength(currentValue) > maxChars) {
-            isError = true;
-            state = 12;
-            return
-        }
-        operand1 = tmp;
+        const tmp = +currentValue;
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 12)) {
+            return;
+        }  
         state = 11;
+        operand1 = tmp;        
         return;
     }
     if (input === "m+") {
@@ -932,8 +944,10 @@ function handleState8(input) {
             currentValue = "0";
             return;
         }
+        if (!applyResult(Math.sqrt(+currentValue), 12)) {
+            return;
+        }
         state = 9;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));
     }
     if (input === "=") {
         if (operator === "/" && +currentValue === 0) {
@@ -941,13 +955,12 @@ function handleState8(input) {
             currentValue = "0";
             state = 12;
             return;
-        }
-        state = 11;
-        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
-        if (getDigitAbsoluteLength(currentValue) > maxChars) {
-            isError = true;
-            state = 12;
-        }
+        }        
+        //Function argument order might be (+currentValue, operand1, operator). Needd to check
+        if (!applyResult(calculateResult(+currentValue, operand1, operator), 12)) {
+            return;
+        }  
+        state = 11;   
         return;
     }
     if (input === "m+") {
@@ -989,9 +1002,11 @@ function handleState9(input) {
             state = 12;
             return;
         }
-        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 12)) {
+            return;
+        }
         operator = input;
-        operand1 = currentValue;
+        operand1 = +currentValue;
         state = 11;
         return;
     }
@@ -1011,8 +1026,10 @@ function handleState9(input) {
             currentValue = "0";
             return;
         }
+        if (!applyResult(Math.sqrt(+currentValue), 12)) {
+            return;
+        }
         state = 9;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));
     }
     if (input === "=") {
         if (operator === "/" && +currentValue === 0) {
@@ -1021,18 +1038,19 @@ function handleState9(input) {
             state = 12;
             return;
         }
+        
+        const tmp = +currentValue;
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 12)) {
+            return;
+        }  
         state = 11;
-        let tmp = +currentValue;
-        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
-        operand1 = tmp;
-        if (getDigitAbsoluteLength(currentValue) > maxChars) {
-            isError = true;
-            state = 12;
-        }
+        operand1 = tmp;       
         return;
     }
     if (input === "%") {
-        currentValue = trimDecimals(calculatePercentage(operand1, +currentValue, operator));
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 12)) {
+            return;
+        }  
         state = 11;
     }
     if (input === "m+") {
@@ -1080,9 +1098,11 @@ function handleState10(input) {
             state = 12;
             return;
         }
-        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 12)) {
+            return;
+        }
         operator = input;
-        operand1 = currentValue;
+        operand1 = +currentValue;
         state = 11;
         return;
     }
@@ -1101,9 +1121,11 @@ function handleState10(input) {
             isError = true;
             currentValue = "0";
             return;
+        }        
+        if (!applyResult(Math.sqrt(+currentValue), 12)) {
+            return;
         }
         state = 9;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));
     }
     if (input === "=") {
         if (operator === "/" && +currentValue === 0) {
@@ -1111,19 +1133,19 @@ function handleState10(input) {
             currentValue = "0";
             state = 12;
             return;
-        }
-        state = 11;
+        }       
         let tmp = +currentValue;
-        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
-        operand1 = tmp;
-        if (getDigitAbsoluteLength(currentValue) > maxChars) {
-            isError = true;
-            state = 12;
-        }
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 12)) {
+            return;
+        }  
+        state = 11;
+        operand1 = tmp;        
         return;
     }
-    if (input === "%") {
-        currentValue = trimDecimals(calculatePercentage(operand1, +currentValue, operator));
+    if (input === "%") {      
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 12)) {
+            return;
+        } 
         state = 11;
     }
     if (input === "m+") {
@@ -1132,9 +1154,11 @@ function handleState10(input) {
             state = 12;
             return;
         }
-        isMemoryAdded = true;
+        isMemoryAdded = true;       
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 12)) {
+            return;
+        }
         memoryValue += + currentValue;
-        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
         state = 9;        
     }
     if (input === 'mr') {
@@ -1184,9 +1208,11 @@ function handleState11(input) {
             isError = true;
             currentValue = "0";
             return;
+        }        
+        if (!applyResult(Math.sqrt(+currentValue), 12)) {
+            return;
         }
         state = 9;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));
     }
     if (input === "=") {
         if (operator === "/" && operand1 === 0) {
@@ -1196,13 +1222,10 @@ function handleState11(input) {
             state = 12;
             return;
         }
-        state = 11;
-        currentValue = trimDecimals(calculateResult(+currentValue, operand1, operator));
-
-        if (getDigitAbsoluteLength(currentValue) > maxChars) {
-            isError = true;
-            state = 12;
-        }
+        if (!applyResult(calculateResult(+currentValue, operand1, operator), 12)) {
+            return;
+        }  
+        state = 11;    
         return;
     }
     if (input === "m+") {
@@ -1254,7 +1277,9 @@ function handleState13(input) {
             state = 5;
             return;
         }
-        currentValue = trimDecimals(calculateResult(operand1, +currentValue, operator));
+        if (!applyResult(calculateResult(operand1, +currentValue, operator), 5)) {
+            return;
+        }   
         operator = input;
         operand1 = +currentValue;
         state = 4;
@@ -1276,8 +1301,10 @@ function handleState13(input) {
             currentValue = "0";
             return;
         }
+        if (!applyResult(Math.sqrt(+currentValue), 5)) {
+            return;
+        }
         state = 13;
-        currentValue = trimDecimals(Math.sqrt(+currentValue));
     }
     if (input === "=") {
         if (operator === "/" && operand1 === 0) {
@@ -1287,13 +1314,10 @@ function handleState13(input) {
             state = 5;
             return;
         }
+        if (!applyResult(calculateResult(+currentValue, operand1, operator), 5)) {
+            return;
+        }   
         state = 4;
-        currentValue = trimDecimals(calculateResult(+currentValue, operand1, operator));
-
-        if (getDigitAbsoluteLength(currentValue) > maxChars) {
-            isError = true;
-            state = 5;
-        }
         return;
     }
     if (input === "m+") {
@@ -1304,6 +1328,9 @@ function handleState13(input) {
     }
 }
 
+/**
+ * Clears all, Goes back to state 0, wipes the memory.
+ */
 function powerOff() {
     state = 0;
     currentValue = "";
@@ -1315,6 +1342,9 @@ function powerOff() {
     console.clear();
 }
 
+/**
+ * Clears all, Goes back to state 1, keeps the memory.
+ */
 function clear() {
     state = 1;
     currentValue = "0";
@@ -1325,6 +1355,9 @@ function clear() {
     console.clear();
 }
 
+/**
+ * Removes last digit from currentValue.
+ */
 function back() {
     if (currentValue.length === 2 && currentValue[0] === "-") {
         currentValue = '0';
@@ -1359,31 +1392,45 @@ function getDigitAbsoluteLength(number) {
  * @param {number} decimalValue - Input value.
  * @returns {number} Trimmed value.
  */
-function trimDecimals(decimalValue) {   
-    let fixedValue = decimalValue.toFixed(maxChars);
-    let intPart = fixedValue.split(".")[0];
-    let fracPart = fixedValue.split(".")[1] ?? "";  
-    let intDigits;
-    if (intPart[0] === "-") {
-        intDigits = intPart.length - 1;
-    } else {
-        intDigits = intPart.length;
+function trimDecimals(decimalValue) {    
+    const sign = decimalValue < 0 ? "-" : "";    
+    const absValue = Math.abs(decimalValue);    
+    const intPart = Math.trunc(absValue).toString();    
+    const intDigits = intPart.length;
+
+    if (intDigits >= maxChars) {
+        return sign + intPart;    }
+
+    const allowedFrac = maxChars - intDigits > 0 ? maxChars - intDigits : 0;    
+    const fixedValue = absValue.toFixed(allowedFrac);    
+    const [fixedInt, fixedFrac = ""] = fixedValue.split(".");
+
+    const trimmedFrac = fixedFrac.replace(/0+$/, "");
+
+    if (!trimmedFrac) {
+        return sign + fixedInt;
     }
 
-    if (!fracPart || intDigits > maxChars) {
-        if (intPart === "-0") {
-            return "0"
-        }
-        return intPart;
+    return `${sign}${fixedInt}.${trimmedFrac}`;
+}
+
+/**
+ * Checks if result length exceeds maxChars. Changes to error state passed in argument.
+ * 
+ * @param {string} value - Value to check.
+ * @param {number} errorState - Error state.
+ * @returns {boolean} Boolean value.
+ */
+function applyResult(value, errorState) {
+    currentValue = trimDecimals(value);
+
+    if (getDigitAbsoluteLength(currentValue) > maxChars) {
+        isError = true;
+        currentValue = "0";
+        state = errorState;
+        return false;
     }
-    const trimmedFrac = fracPart.replace(/0+$/, "");
-    if (!trimmedFrac) {
-        if (intPart === "-0") {
-            return "0"
-        }
-        return intPart;
-    }
-    return `${intPart}.${trimmedFrac}`;
+    return true;
 }
 
 /**
@@ -1479,11 +1526,11 @@ function debugPrintValues() {
         return String(str).padEnd(len, " ");
     }
     const COL1 = 18;
-    const COL2 = 10;
+    const COL2 = 16;
     const COL3 = 10;
-    console.log("┌───────────────────┬───────────┬───────────┐");
+    console.log("┌───────────────────┬─────────────────┬───────────┐");
     console.log(`│ ${pad("Name", COL1)}│ ${pad("Value", COL2)}│ ${pad("Type", COL3)}│`);
-    console.log("├───────────────────┼───────────┼───────────┤");
+    console.log("├───────────────────┼─────────────────┼───────────┤");
     console.log(`│ %c${pad("state", COL1)}%c│ %c${pad(state, COL2)}%c│ %c${pad(typeof state, COL3)}%c│`, ...variableColor(state));
     console.log(`│ %c${pad("operand1", COL1)}%c│ %c${pad(operand1, COL2)}%c│ %c${pad(typeof operand1, COL3)}%c│`, ...variableColor(operand1));
     console.log(`│ %c${pad("operator", COL1)}%c│ %c${pad(operator, COL2)}%c│ %c${pad(typeof operator, COL3)}%c│`, ...variableColor(operator));
@@ -1492,5 +1539,5 @@ function debugPrintValues() {
     console.log(`│ %c${pad("isMemoryAdded", COL1)}%c│ %c${pad(isMemoryAdded, COL2)}%c│ %c${pad(typeof isMemoryAdded, COL3)}%c│`, ...variableColor(isMemoryAdded));
     console.log(`│ %c${pad("isError", COL1)}%c│ %c${pad(isError, COL2)}%c│ %c${pad(typeof isError, COL3)}%c│`, ...variableColor(isError));
     console.log(`│ %c${pad("isFirstOperation", COL1)}%c│ %c${pad(isFirstOperation, COL2)}%c│ %c${pad(typeof isFirstOperation, COL3)}%c│`, ...variableColor(isFirstOperation));
-    console.log("└───────────────────┴───────────┴───────────┘");
+    console.log("└───────────────────┴─────────────────┴───────────┘");
 }
