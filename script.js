@@ -163,6 +163,7 @@ window.addEventListener("load", (event) => {
     isMemoryAdded = false;
     isError = false;
     memoryValue = 0;
+    justRecalled = false;
     setScreen(currentValue, isMemoryAdded, isError);
     debugPrintValues();
 });
@@ -229,6 +230,10 @@ function handleKeys(event) {
     }
     if (event.ctrlKey && event.code === "KeyC") {
         copyToClipboard(currentValue);
+        return true;
+    }
+    if (event.ctrlKey && event.altKey && event.shiftKey && event.code === "KeyR") {
+        runRandomInputs();
         return true;
     }
     return false;
@@ -333,6 +338,7 @@ let isError = false;
 let isFirstOperation = true;
 let memoryValue = null;
 let operand1 = null;
+let justRecalled =false;
 
 function onUserInput(input) {
     switch (state) {
@@ -420,15 +426,20 @@ function onUserInput(input) {
 //1. Composing Digit
 function handleState1(input) {
     if (input === "power") {
-        powerOff();
+        powerOff();        
     }
     if (input === "clear") {
-        clear();
+        clear();       
     }
     if (input === "back") {
-        back();
+        back();        
     }
     if (input >= "0" && input <= "9") {
+        if (justRecalled) {
+            currentValue = input;
+            justRecalled = false;
+            return;
+        }
         if (currentValue === "0") {
             currentValue = input;
             return;
@@ -465,7 +476,8 @@ function handleState1(input) {
         }
         if (currentValue !== "0") {
             currentValue = "-" + currentValue;
-        }
+            return;
+        }        
     }
     if (input === "sqrt") {
         if (currentValue[0] === "-") {
@@ -478,6 +490,7 @@ function handleState1(input) {
             return;
         }
         state = 4;
+        return;
     }
     if (input === "=") {
         if (operator === "") {
@@ -500,6 +513,7 @@ function handleState1(input) {
         state = 6;
         isMemoryAdded = true;
         memoryValue += +currentValue;
+        return;
     }
 }
 
@@ -507,16 +521,22 @@ function handleState1(input) {
 function handleState2(input) {
     if (input === "power") {
         powerOff();
+        return;
     }
     if (input === "clear") {
         clear();
     }
-    if (input >= "0" && input <= "9") {
+    if (input >= "0" && input <= "9") {       
         currentValue = input;
         state = 3;
         return;
     }
     if (input === "decimal") {
+        if (justRecalled) {
+            currentValue = "0.";
+            justRecalled = false;
+            return;
+        }
         currentValue = "0.";
         state = 3;
         return;
@@ -533,6 +553,7 @@ function handleState2(input) {
         if (currentValue !== "0") {
             currentValue = "-" + currentValue;
             state = 3;
+            return;
         }
     }
     if (input === "sqrt") {
@@ -546,6 +567,7 @@ function handleState2(input) {
             return;
         }
         state = 13;
+        return;
     }
     if (input === "=") {
         if (operator === "/" && +currentValue === 0) {
@@ -565,6 +587,7 @@ function handleState2(input) {
         state = 6;
         isMemoryAdded = true;
         memoryValue += +currentValue;
+        return;
     }
 }
 
@@ -580,6 +603,11 @@ function handleState3(input) {
         back();
     }
     if (input >= "0" && input <= "9") {
+        if (justRecalled) {
+            currentValue = input;
+            justRecalled = false;
+            return;
+        }
         if (currentValue === "0") {
             currentValue = input;
             return;
@@ -592,6 +620,11 @@ function handleState3(input) {
         return;
     }
     if (input === "decimal") {
+        if (justRecalled) {
+            currentValue = "0.";
+            justRecalled = false;
+            return;
+        }
         if (currentValue.includes(".")) {
             return;
         }
@@ -626,6 +659,7 @@ function handleState3(input) {
         }
         if (currentValue !== "0") {
             currentValue = "-" + currentValue;
+            return;
         }
     }
     if (input === "sqrt") {
@@ -640,6 +674,7 @@ function handleState3(input) {
             return;
         }
         state = 13;
+        return;
     }
     if (input === "=") {
         if (operator === "/" &&
@@ -674,7 +709,7 @@ function handleState3(input) {
         memoryValue += + currentValue;
         operand1 = tmp;
         state = 7;
-        // operator = '';
+        return;        
     }
 }
 
@@ -686,11 +721,10 @@ function handleState4(input) {
     if (input === "clear") {
         clear();
     }
-    if (input >= "0" && input <= "9") {
+    if (input >= "0" && input <= "9") {        
         if (isFirstOperation) {
-            state = 1; //
-            currentValue = input;
-            // operator = "";
+            state = 1; 
+            currentValue = input;            
             return;
         }
         state = 3;
@@ -698,6 +732,11 @@ function handleState4(input) {
         return;
     }
     if (input === "decimal") {
+        if (justRecalled) {
+            currentValue = "0.";
+            justRecalled = false;
+            return;
+        }
         state = 1;
         currentValue = "0.";
         operator = "";
@@ -716,6 +755,7 @@ function handleState4(input) {
         }
         if (currentValue !== "0") {
             currentValue = "-" + currentValue;
+            return;
         }
     }
     if (input === "sqrt") {
@@ -728,7 +768,8 @@ function handleState4(input) {
         if (!applyResult(Math.sqrt(+currentValue), 5)) {
             return;
         }
-        state = 13;
+        state = 13;        
+        return;
     }
     if (input === "=") {
         if (operator === "/" && operand1 === 0) {
@@ -748,6 +789,7 @@ function handleState4(input) {
         isMemoryAdded = true;
         memoryValue += +currentValue;
         state = 11;
+        return;
     }
 }
 
@@ -772,16 +814,23 @@ function handleState6(input) {
     if (input === "clear") {
         clear();
         state = 6;
-    }
-    // if (input === "back") {
-    // }
+    }    
     if (input >= "0" && input <= "9") {
+        if (justRecalled) {
+            currentValue = input;
+            justRecalled = false;
+            return;
+        }
         state = 7;
-        currentValue = input;
-        // operator = "";
+        currentValue = input;       
         return;
     }
     if (input === "decimal") {
+        if (justRecalled) {
+            currentValue = "0.";
+            justRecalled = false;
+            return;
+        }
         state = 7;
         currentValue = "0.";
         return;
@@ -799,6 +848,7 @@ function handleState6(input) {
         }
         if (currentValue !== "0") {
             currentValue = "-" + currentValue;
+            return;
         }
     }
     if (input === "sqrt") {
@@ -812,13 +862,17 @@ function handleState6(input) {
             return;
         }
         state = 11;
+        return;
     }    
     if (input === "m+") {
         memoryValue += +currentValue;
+        return;
     }
     if (input === 'mr') {
         currentValue = memoryValue.toString();
+        justRecalled = true;  
         state = 7;
+        return;
     }
 }
 
@@ -835,6 +889,11 @@ function handleState7(input) {
         back();
     }
     if (input >= "0" && input <= "9") {
+        if (justRecalled) {
+            currentValue = input;
+            justRecalled = false;
+            return;
+        }
         if (currentValue === "0") {
             currentValue = input;
             return;
@@ -847,6 +906,11 @@ function handleState7(input) {
         return;
     }
     if (input === "decimal") {
+        if (justRecalled) {
+            currentValue = "0.";
+            justRecalled = false;
+            return;
+        }
         if (currentValue.includes(".")) {
             return;
         }
@@ -871,6 +935,7 @@ function handleState7(input) {
         }
         if (currentValue !== "0") {
             currentValue = "-" + currentValue;
+            return;
         }
     }
     if (input === "sqrt") {
@@ -884,6 +949,7 @@ function handleState7(input) {
             return;
         }
         state = 11;
+        return;
     }
     if (input === "=") {
         if (operator === "/" && +currentValue === 0) {
@@ -902,9 +968,12 @@ function handleState7(input) {
     }
     if (input === "m+") {
         memoryValue += +currentValue;
+        return;
     }
     if (input === 'mr') {
         currentValue = memoryValue.toString();
+        justRecalled = true;
+        return;
     }
 }
 
@@ -917,12 +986,17 @@ function handleState8(input) {
         clear();
         state = 7;
     }
-    if (input >= "0" && input <= "9") {
+    if (input >= "0" && input <= "9") {        
         currentValue = input;
         state = 10;
         return;
     }
     if (input === "decimal") {
+        if (justRecalled) {
+            currentValue = "0.";
+            justRecalled = false;
+            return;
+        }
         currentValue = "0.";
         state = 10;
         return;
@@ -939,6 +1013,7 @@ function handleState8(input) {
         if (currentValue !== "0") {
             currentValue = "-" + currentValue;
             state = 10;
+            return;
         }
     }
     if (input === "sqrt") {
@@ -952,6 +1027,7 @@ function handleState8(input) {
             return;
         }
         state = 9;
+        return;
     }
     if (input === "=") {
         if (operator === "/" && +currentValue === 0) {
@@ -971,10 +1047,13 @@ function handleState8(input) {
         state = 6;
         isMemoryAdded = true;
         memoryValue += +currentValue;
+        return;
     }
     if (input === 'mr') {
-        currentValue = memoryValue.toString();
+        currentValue = memoryValue.toString();        
+        justRecalled = true;
         state = 9;
+        return;
     }
 }
 
@@ -986,16 +1065,24 @@ function handleState9(input) {
     if (input === "clear") {
         clear();
         state = 7;
-    }
-    // if (input === "back") {       
-    // }
+    }  
     if (input >= "0" && input <= "9") {
+        if (justRecalled) {
+            currentValue = input;
+            justRecalled = false;
+            return;
+        }
         currentValue = '';
         currentValue += input;
         state = 10;
         return;
     }
     if (input === "decimal") {
+        if (justRecalled) {
+            currentValue = "0.";
+            justRecalled = false;
+            return;
+        }
         state = 10;
         currentValue = "0.";
         return;
@@ -1021,6 +1108,7 @@ function handleState9(input) {
         }
         if (currentValue !== "0") {
             currentValue = "-" + currentValue;
+            return;
         }
     }
     if (input === "sqrt") {
@@ -1034,6 +1122,7 @@ function handleState9(input) {
             return;
         }
         state = 9;
+        return;
     }
     if (input === "=") {
         if (operator === "/" && +currentValue === 0) {
@@ -1059,9 +1148,12 @@ function handleState9(input) {
     }
     if (input === "m+") {
         memoryValue += + currentValue;
+        return;
     }
     if (input === 'mr') {
         currentValue = memoryValue.toString();
+        justRecalled = true;
+        return;
     }
 }
 
@@ -1078,6 +1170,11 @@ function handleState10(input) {
         back();
     }
     if (input >= "0" && input <= "9") {
+        if (justRecalled) {
+            currentValue = input;
+            justRecalled = false;
+            return;
+        }
         if (currentValue === "0") {
             currentValue = input;
             return;
@@ -1090,6 +1187,11 @@ function handleState10(input) {
         return;
     }
     if (input === "decimal") {
+        if (justRecalled) {
+            currentValue = "0.";
+            justRecalled = false;
+            return;
+        }
         if (currentValue.includes(".")) {
             return;
         }
@@ -1121,6 +1223,7 @@ function handleState10(input) {
         }
         if (currentValue !== "0") {
             currentValue = "-" + currentValue;
+            return;            
         }
     }
     if (input === "sqrt") {
@@ -1134,6 +1237,7 @@ function handleState10(input) {
             return;
         }
         state = 9;
+        return;
     }
     if (input === "=") {
         if (operator === "/" && +currentValue === 0) {
@@ -1167,11 +1271,14 @@ function handleState10(input) {
             return;
         }
         memoryValue += + currentValue;
-        state = 9;        
+        state = 9;      
+        return;  
     }
     if (input === 'mr') {
         currentValue = memoryValue.toString();
+        justRecalled = true;
         state = 8;
+        return;
     }
 }
 
@@ -1191,6 +1298,11 @@ function handleState11(input) {
         return;
     }
     if (input === "decimal") {
+        if (justRecalled) {
+            currentValue = "0.";
+            justRecalled = false;
+            return;
+        }
         state = 7;
         currentValue = "0.";
         return;
@@ -1208,6 +1320,7 @@ function handleState11(input) {
         }
         if (currentValue !== "0") {
             currentValue = "-" + currentValue;
+            return;
         }
     }
     if (input === "sqrt") {
@@ -1221,6 +1334,7 @@ function handleState11(input) {
             return;
         }
         state = 9;
+        return;
     }
     if (input === "=") {
         if (operator === "/" && operand1 === 0) {
@@ -1238,9 +1352,11 @@ function handleState11(input) {
     }
     if (input === "m+") {
         memoryValue += +currentValue;
+        return;
     }
     if (input === 'mr') {
         currentValue = memoryValue.toString();
+        justRecalled = true;
         state = 9;
     }
 }
@@ -1274,6 +1390,11 @@ function handleState13(input) {
         return;
     }
     if (input === "decimal") {
+        if (justRecalled) {
+            currentValue = "0.";
+            justRecalled = false;
+            return;
+        }
         state = 3;
         currentValue = "0.";
         return;
@@ -1300,6 +1421,7 @@ function handleState13(input) {
         }
         if (currentValue !== "0") {
             currentValue = "-" + currentValue;
+            return;
         }
     }
     if (input === "sqrt") {
@@ -1313,6 +1435,7 @@ function handleState13(input) {
             return;
         }
         state = 13;
+        return;
     }
     if (input === "=") {
         if (operator === "/" && operand1 === 0) {
@@ -1333,6 +1456,7 @@ function handleState13(input) {
         memoryValue += +currentValue;
         //check, mb this should be 9
         state = 11; 
+        return;
     }
 }
 
@@ -1345,9 +1469,11 @@ function powerOff() {
     operand1 = null;
     operator = "";
     isMemoryAdded = false;
+    memoryValue = 0;
     isError = false;
     isFirstOperation = true;
-    console.clear();
+    justRecalled = false;
+    console.clear();   
 }
 
 /**
@@ -1360,7 +1486,8 @@ function clear() {
     isFirstOperation = true;
     operator = "";
     operand1 = null;
-    console.clear();
+    justRecalled = false;
+    console.clear();  
 }
 
 /**
@@ -1450,7 +1577,8 @@ function applyResult(value, errorState) {
  * @returns {number} The result of calculation.
  */
 function calculateResult(leftSideOperand, rightSideOperand, operation) {
-
+    if (!operation) return rightSideOperand;    
+    
     if (operation === "+") {
         return leftSideOperand + rightSideOperand;
     }
@@ -1546,6 +1674,140 @@ function debugPrintValues() {
     console.log(`│ %c${pad("memoryValue", COL1)}%c│ %c${pad(memoryValue, COL2)}%c│ %c${pad(typeof memoryValue, COL3)}%c│`, ...variableColor(memoryValue));
     console.log(`│ %c${pad("isMemoryAdded", COL1)}%c│ %c${pad(isMemoryAdded, COL2)}%c│ %c${pad(typeof isMemoryAdded, COL3)}%c│`, ...variableColor(isMemoryAdded));
     console.log(`│ %c${pad("isError", COL1)}%c│ %c${pad(isError, COL2)}%c│ %c${pad(typeof isError, COL3)}%c│`, ...variableColor(isError));
+    console.log(`│ %c${pad("justRecalled", COL1)}%c│ %c${pad(justRecalled, COL2)}%c│ %c${pad(typeof justRecalled, COL3)}%c│`, ...variableColor(justRecalled));
     console.log(`│ %c${pad("isFirstOperation", COL1)}%c│ %c${pad(isFirstOperation, COL2)}%c│ %c${pad(typeof isFirstOperation, COL3)}%c│`, ...variableColor(isFirstOperation));
     console.log("└───────────────────┴─────────────────┴───────────┘");
+}
+
+/**
+ * Injects a one-time CSS rule used to visually highlight pressed buttons.
+ */
+function ensurePressedStyle() {
+    if (document.getElementById("pressedStyle")) {
+        return;
+    }
+    const style = document.createElement("style");
+    style.id = "pressedStyle";
+    style.textContent = [
+        ".buttons .buttonPressed {",
+        "  transform: translateY(1px);",
+        "  box-shadow: none;",
+        "  filter: brightness(0.9);",
+        "}",
+        ".buttons .buttonPressed .buttonGlare {",
+        "  opacity: 0.15;",
+        "}"
+    ].join("\n");
+    document.head.appendChild(style);
+}
+
+
+/**
+ * Maps a calculator input token to its corresponding button element.
+ *
+ * @param {string} input - Calculator input token (e.g., "5", "+", "mr").
+ * @returns {HTMLElement|null} Matching button element or null if not found.
+ */
+function getButtonForInput(input) {
+    const inputToId = {
+        "0": "buttonZero",
+        "1": "buttonOne",
+        "2": "buttonTwo",
+        "3": "buttonThree",
+        "4": "buttonFour",
+        "5": "buttonFive",
+        "6": "buttonSix",
+        "7": "buttonSeven",
+        "8": "buttonEight",
+        "9": "buttonNine",
+        "decimal": "buttonDot",
+        "back": "buttonBack",
+        "clear": "buttonClear",
+        "sign": "buttonSignChange",
+        "sqrt": "buttonSquareRoot",
+        "m+": "buttonMPlus",
+        "mr": "buttonMRecall",
+        "%": "buttonPercent",
+        "/": "buttonDivide",
+        "*": "buttonMultiply",
+        "-": "buttonMinus",
+        "+": "buttonAdd",
+        "=": "buttonEquals",
+        "power": "buttonPower"
+    };
+
+    const id = inputToId[input];
+    if (!id) {
+        return null;
+    }
+    return document.getElementById(id);
+}
+
+/**
+ * Temporarily applies a pressed visual state to the button for a given input.
+ *
+ * @param {string} input - Calculator input token.
+ * @param {number} durationMs - How long to keep the pressed style.
+ */
+function flashButton(input, durationMs = 100) {
+    const button = getButtonForInput(input);
+    if (!button) {
+        return;
+    }
+    button.classList.add("buttonPressed");
+    setTimeout(() => {
+        button.classList.remove("buttonPressed");
+    }, durationMs);
+}
+
+/**
+ * Simple async delay helper.
+ *
+ * @param {number} ms - Milliseconds to wait.
+ * @returns {Promise<void>}
+ */
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Runs a randomized sequence of calculator inputs with visual feedback and logging.
+ *
+ * @param {number} count - Number of random inputs to trigger.
+ * @param {number} delayMs - Delay between inputs for visibility.
+ * @returns {Promise<void>}
+ */
+async function runRandomInputs(count = 20, delayMs = 1100) {
+    ensurePressedStyle();
+
+    const inputs = [
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+        "+", "-", "*", "/", "=",
+        "decimal", "back", "clear",
+        "sign", "sqrt", "%", "m+", "mr",
+        "power"
+    ];
+
+    const sequence = [];
+
+    if (state === 0) {
+        flashButton("power", delayMs * 0.7);
+        onUserInput("power");
+        sequence.push("power");
+        await sleep(delayMs);
+    }
+
+    for (let i = 0; i < count; i++) {
+        let input = inputs[Math.floor(Math.random() * inputs.length)];
+        if (input === "power" && state !== 0) {
+            i--;
+            continue;
+        }
+        flashButton(input, delayMs * 0.7);
+        onUserInput(input);
+        sequence.push(input);
+        await sleep(delayMs);
+    }
+
+    console.log("Random sequence:", sequence.join(" "));
 }
