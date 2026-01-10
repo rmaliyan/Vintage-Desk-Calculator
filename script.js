@@ -580,6 +580,10 @@ function handleState3(input) {
         back();
     }
     if (input >= "0" && input <= "9") {
+        if (currentValue === "0") {
+            currentValue = input;
+            return;
+        }
         if (getDigitAbsoluteLength(currentValue) === maxChars) {
             console.log("%cInfo: %cNumber of digits exceeds maxChar", "color :aqua; font-weight:bold", "color:white")
             return;
@@ -1074,6 +1078,10 @@ function handleState10(input) {
         back();
     }
     if (input >= "0" && input <= "9") {
+        if (currentValue === "0") {
+            currentValue = input;
+            return;
+        }
         if (getDigitAbsoluteLength(currentValue) === maxChars) {
             console.log("%cInfo: %cNumber of digits exceeds maxChar", "color :aqua; font-weight:bold", "color:white")
             return;
