@@ -661,7 +661,7 @@ function handleState3(input) {
     }
     if (input === "%") {
         if (!operator) return;
-        if (!applyResult(calculateResult(operand1, +currentValue, operator), 5)) {
+        if (!applyResult(calculatePercentage(operand1, +currentValue, operator), 5)) {
             return;
         }        
     }
@@ -1052,7 +1052,7 @@ function handleState9(input) {
         return;
     }
     if (input === "%") {
-        if (!applyResult(calculateResult(operand1, +currentValue, operator), 12)) {
+        if (!applyResult(calculatePercentage(operand1, +currentValue, operator), 12)) {
             return;
         }  
         state = 11;
@@ -1151,7 +1151,7 @@ function handleState10(input) {
         return;
     }
     if (input === "%") {      
-        if (!applyResult(calculateResult(operand1, +currentValue, operator), 12)) {
+        if (!applyResult(calculatePercentage(operand1, +currentValue, operator), 12)) {
             return;
         } 
         state = 11;
