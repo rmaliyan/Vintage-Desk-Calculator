@@ -316,7 +316,7 @@ function setScreen(currentValue, isMemoryAdded, isError) {
         currentValue = currentValue.slice(0, decimalIndex) + currentValue.slice(decimalIndex + 1);
         //padLeft was calculated before removing the dot hence ++
         padLeft++;
-        // decimalIndex-1 because dots and digits indexes are not alligned
+        // decimalIndex-1 because dots' and digits' indexes are not alligned
         setDot(padLeft + decimalIndex - 1, true);
     }
     for (let i = 0; i < padLeft; i++) {
@@ -328,9 +328,7 @@ function setScreen(currentValue, isMemoryAdded, isError) {
 }
 
 const maxChars = 9;
-
 let state = 0;
-
 let currentValue = null;
 let operator = null;
 let isMemoryAdded = false;
@@ -637,7 +635,7 @@ function handleState3(input) {
         return;
     }
     if (input === "+" || input === "-" || input === "*" || input === "/") {
-        if (operator === "/" && currentValue === "0") {
+        if (operator === "/" && +currentValue === 0) {
             console.log("%cError: %cYou can't divide by zero", "color :red; font-weight:bold", "color:white")
             isError = true;
             state = 5;
@@ -1088,7 +1086,7 @@ function handleState9(input) {
         return;
     }
     if (input === "+" || input === "-" || input === "*" || input === "/") {
-        if (operator === "/" && currentValue === "0") {
+        if (operator === "/" && +currentValue === 0) {
             isError = true;
             state = 12;
             return;
@@ -1203,7 +1201,7 @@ function handleState10(input) {
         return;
     }
     if (input === "+" || input === "-" || input === "*" || input === "/") {
-        if (operator === "/" && currentValue === "0") {
+        if (operator === "/" && +currentValue === 0) {
             isError = true;
             state = 12;
             return;
@@ -1261,7 +1259,7 @@ function handleState10(input) {
         state = 11;
     }
     if (input === "m+") {
-        if (operator === "/" && currentValue === "0") {
+        if (operator === "/" && +currentValue === 0) {
             isError = true;
             state = 12;
             return;
@@ -1400,7 +1398,7 @@ function handleState13(input) {
         return;
     }
     if (input === "+" || input === "-" || input === "*" || input === "/") {
-        if (operator === "/" && currentValue === "0") {
+        if (operator === "/" && +currentValue === 0) {
             console.log("%cError: %cYou can't divide by zero", "color :red; font-weight:bold", "color:white")
             isError = true;
             state = 5;
@@ -1592,6 +1590,7 @@ function calculateResult(leftSideOperand, rightSideOperand, operation) {
         return leftSideOperand / rightSideOperand;
     }
 }
+
 /**
  * Performs percentage calculation between 2 numbers based on operation.
  *
@@ -1700,7 +1699,6 @@ function ensurePressedStyle() {
     ].join("\n");
     document.head.appendChild(style);
 }
-
 
 /**
  * Maps a calculator input token to its corresponding button element.
